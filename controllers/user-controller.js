@@ -8,8 +8,9 @@ const userController = {
   },
   signUp: (req, res, next) => {
     const { cpnyName, cpnyId, email, password, passwordCheck } = req.body
+    if (!cpnyName || !cpnyId || !email || !password || !passwordCheck) throw new Error('所有欄位都是必填的')
     if (password !== passwordCheck) throw new Error('密碼與驗證密碼不相同')
-    User.findOne({ where: { email } })
+    return User.findOne({ where: { email } })
       .then(user => {
         if (user) throw new Error('Email已註冊過')
         return bcrypt.hash(req.body.password, 10)
