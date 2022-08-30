@@ -9,6 +9,8 @@ const userController = {
   signUp: (req, res, next) => {
     const { cpnyName, cpnyId, email, password, passwordCheck } = req.body
     if (!cpnyName || !cpnyId || !email || !password || !passwordCheck) throw new Error('所有欄位都是必填的')
+    console.log(cpnyName)
+    console.log(cpnyId)
     if (password !== passwordCheck) throw new Error('密碼與驗證密碼不相同')
     return User.findOne({ where: { email } })
       .then(user => {
