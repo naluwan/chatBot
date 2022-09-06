@@ -1,6 +1,7 @@
 const bcrypt = require('bcryptjs')
 const db = require('../models')
-const { User } = db
+const { User, TrainingData } = db
+const trainingDataList = require('../data/trainingDataSeeds.json')
 
 const userController = {
   signUpPage: (req, res) => {
@@ -8,9 +9,10 @@ const userController = {
   },
   signUp: (req, res, next) => {
     const { cpnyName, cpnyId, email, password, passwordCheck } = req.body
-    if (!cpnyName || !cpnyId || !email || !password || !passwordCheck) throw new Error('所有欄位都是必填的')
-    console.log(cpnyName)
-    console.log(cpnyId)
+    if (!cpnyName || !cpnyId || !email || !password || !passwordCheck) {
+      throw new Error('所有欄位都是必填的')
+    }
+
     if (password !== passwordCheck) throw new Error('密碼與驗證密碼不相同')
     return User.findOne({ where: { email } })
       .then(user => {
@@ -26,8 +28,26 @@ const userController = {
         })
       )
       .then(() => {
-        req.flash('success_message', '帳號註冊成功')
-        res.redirect('/signin')
+        User.findOne({ where: { email } })
+          .then(user => {
+            return trainingDataList.map(data => {
+              const content = JSON.stringify(data.content)
+
+              return {
+                name: data.name,
+                content,
+                userId: user.id
+              }
+            })
+          })
+          .then(trainDataArr => {
+            return TrainingData.bulkCreate(trainDataArr)
+          })
+          .then(() => {
+            req.flash('success_message', '帳號註冊成功')
+            res.redirect('/signin')
+          })
+          .catch(err => next(err))
       })
       .catch(err => next(err))
   },
