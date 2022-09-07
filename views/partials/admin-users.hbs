@@ -1,0 +1,32 @@
+<table class='table align-middle'>
+  <thead class='thead-dark'>
+    <tr>
+      <th scope='col'>公司代號</th>
+      <th scope='col'>公司名稱</th>
+      <th scope='col'>帳號</th>
+      <th scope='col'>權限</th>
+      <th scope='col'>權限操作</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#each users}}
+      <tr>
+        <th scope='row'>{{this.cpnyId}}</th>
+        <td>{{this.cpnyName}}</td>
+        <td>{{this.email}}</td>
+        <td>{{#if this.isAdmin}}admin{{else}}user{{/if}}</td>
+        <td>
+          <form
+            action='/admin/users/{{this.id}}?_method=PATCH'
+            method='POST'
+            style='display: inline;'
+          >
+            <button type='submit' class='btn btn-link link-primary'>
+              {{#if this.isAdmin}}設為一般使用者{{else}}設為管理員{{/if}}
+            </button>
+          </form>
+        </td>
+      </tr>
+    {{/each}}
+  </tbody>
+</table>

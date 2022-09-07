@@ -1,0 +1,12 @@
+{{#if stories}}
+{{> admin-tabs route='stories'}}
+{{else}}
+{{> admin-tabs route='users'}}
+{{/if}}
+<br />
+<br />
+{{#if stories}}
+<div>admin stories</div>
+{{else}}
+{{> admin-users}}
+{{/if}}
