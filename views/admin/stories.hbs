@@ -1,0 +1,62 @@
+<div class="pb-5">
+  {{> admin-tabs route='stories'}}
+</div>
+
+<div class="d-flex flex-row">
+  <div class="col-6">
+    <form action="/admin/stories" method="post">
+      <div class='row mb-3'>
+        <label for="userId" class="col-2 col-form-label">使用者:</label>
+        <div class="col-6">
+          <select name='userId' id='userId' class='form-control' onchange="this.form.submit()">
+            <option value="" {{#unless userId}} selected {{/unless}} disabled>請選擇使用者</option>
+            {{#each users}}
+              {{#ifNot this.cpnyName 'admin'}}
+              <option 
+                value='{{this.id}}'
+                {{#ifCond this.id ../userId}} selected {{/ifCond}}
+              >
+                {{this.cpnyName}}
+              </option>
+              {{/ifNot}}
+            {{/each}}
+          </select>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="col-6">
+    <form action="/admin/stories" method="post">
+      <div class='row mb-3'>
+        <label for="storyName" class="col-2 col-form-label">故事名稱:</label>
+        <div class="col-6">
+          <select name='storyName' id='storyName' class='form-control' onchange="this.form.submit()">
+            {{#unless userId}}
+              <option value="" selected disabled>請先選擇使用者</option>
+            {{else}}
+              <option value="" {{#unless storyName}} selected {{/unless}} disabled>請選擇故事</option>
+            {{/unless}}
+            {{#each stories}}
+              <option 
+                value='{{this.story}}'
+                {{#ifCond this.story ../storyName}} selected {{/ifCond}}
+              >
+                {{this.story}}
+              </option>
+            {{/each}}
+          </select>
+        </div>
+      </div>
+      <input type="text" name="userId" id="userId" value="{{userId}}" readonly style="display: none;">
+    </form>
+  </div>
+</div>
+
+{{#if steps}}
+  <div class="pt-5">
+    <h5>{{storyName}}</h5>
+    <hr />
+    {{> admin-storySteps}}
+    <hr />
+  </div>
+{{/if}}
