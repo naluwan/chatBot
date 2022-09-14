@@ -1,0 +1,13 @@
+<div class='card col-6 m-3'>
+  <h4 class='card-header'>
+    使用者
+  </h4>
+  <div class='card-body'>
+    {{#if this.user}}
+      <h5 class='card-title'>{{this.user}}</h5>
+    {{else}}
+      <h5 class='card-title'>意圖: {{this.intent}}</h5>
+    {{/if}}
+    <a href='#' class='btn btn-primary mt-3'>編輯</a>
+  </div>
+</div>

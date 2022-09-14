@@ -1,11 +1,50 @@
-const { User } = require('../models')
+const { User, TrainingData } = require('../models')
 const adminControllers = {
-  getFragments: (req, res) => {
-    return res.render('admin/index')
+  getStories: (req, res, next) => {
+    let stories = true
+    return Promise.all([
+      User.findAll({ raw: true }),
+      req.body.userId
+        ? TrainingData.findAll({ where: { userId: req.body.userId }, raw: true })
+        : null,
+      req.body.storyName ? req.body.storyName : null
+    ])
+      .then(([users, data, storyName]) => {
+        if (!data) {
+          return res.render('admin/stories', { users, stories })
+        }
+        stories = JSON.parse(data.filter(item => item.name === 'fragments')[0].content).stories
+        const responses = JSON.parse(
+          data.filter(item => item.name === 'domain')[0].content
+        ).responses
+
+        stories.map(item => {
+          return item.steps.map(step => {
+            if (step.action) {
+              step.response = responses[step.action][0].text
+            }
+            return step
+          })
+        })
+
+        if (storyName) {
+          const steps = stories.filter(item => item.story === storyName)[0].steps
+          return res.render('admin/stories', {
+            users,
+            userId: req.body.userId,
+            stories,
+            steps,
+            storyName
+          })
+        }
+
+        res.render('admin/stories', { users, userId: req.body.userId, stories })
+      })
+      .catch(err => next(err))
   },
   getUsers: (req, res, next) => {
     return User.findAll({ raw: true })
-      .then(users => res.render('admin/index', { users }))
+      .then(users => res.render('admin/users', { users }))
       .catch(err => next(err))
   },
   patchUser: (req, res, next) => {

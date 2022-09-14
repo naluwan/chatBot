@@ -1,0 +1,11 @@
+{{#each steps}}
+  {{#if this.intent}}
+    <div class="d-flex justify-content-start">
+      {{> admin-userStep}}
+    </div>
+  {{else}}
+    <div class="d-flex justify-content-end">
+      {{> admin-botStep}}
+    </div>
+  {{/if}}
+{{/each}}
