@@ -31,20 +31,39 @@
 
     {{#if isAuthenticated}}
       <!-- 導入webchat視窗 -->
-      <script>!(function () { let e = document.createElement("script"), t =
-        document.head || document.getElementsByTagName("head")[0]; (e.src =
-        "http://cdn.jsdelivr.net/npm/rasa-webchat@1.0.1/lib/index.js"), //
-        Replace 1.x.x with the version that you want (e.async = !0), (e.onload =
-        () => { window.WebChat.default( { customData: { "language": "zh",
-        "userId": `{{user.cpny_id}}`}, initPayload: "/get_started", socketUrl:
-        "http://192.168.10.105:5005", // socketPath: "/socket.io/",
-        profileAvatar: "/images/jennyhire.jpg", inputTextFieldHint:
-        "請輸入內容....", title: `[測試版]{{user.cpny_name}}小幫手`, subtitle:
-        "", params: { "storage": "session" }, showFullScreenButton: true,
-        showCloseButton: true, showMessageDate: true, // embedded: true, // add
-        other props here }, null ); }), t.insertBefore(e, t.firstChild); //
-        只要重整就刪除對話紀錄 window.sessionStorage.clear() })();
-      </script>
+      <script>!(function () {
+        let e = document.createElement("script"),
+          t = document.head || document.getElementsByTagName("head")[0];
+        (e.src =
+          "http://cdn.jsdelivr.net/npm/rasa-webchat@1.0.1/lib/index.js"),
+          // Replace 1.x.x with the version that you want
+          (e.async = !0),
+          (e.onload = () => {
+            window.WebChat.default(
+              {
+                customData: { "language": "zh", "userId": `{{user.cpny_id}}`},
+                initPayload: "/get_started",
+                socketUrl: "http://192.168.10.105:5005",
+                // socketPath: "/socket.io/",
+                profileAvatar: "/images/jennyhire.jpg",
+                inputTextFieldHint: "請輸入內容....",
+                title: `[測試版]{{user.cpny_name}}小幫手`,
+                subtitle: "",
+                params: { "storage": "session" },
+                showFullScreenButton: true,
+                showCloseButton: true,
+                showMessageDate: true,
+                // embedded: true,
+                // add other props here
+              },
+              null
+            );
+          }),
+          t.insertBefore(e, t.firstChild);
+          // 只要重整就刪除對話紀錄
+          window.sessionStorage.clear()
+      })();
+    </script>
     {{/if}}
     <script
       src='https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js'

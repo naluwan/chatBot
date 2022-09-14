@@ -1,6 +1,7 @@
 const { getUser, ensureAuthenticated } = require('../helpers/auth-helpers')
 const authenticated = (req, res, next) => {
   if (ensureAuthenticated(req)) {
+    res.locals.isAuthenticated = req.isAuthenticated()
     return next()
   }
   res.redirect('/signin')
