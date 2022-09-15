@@ -27,7 +27,7 @@
         <button type='button' class='btn-close' data-bs-dismiss='modal' aria-label='Close'></button>
       </div>
       <div class='modal-body'>
-        <form action='/admin/stories/{{this.action}}?_method=PUT' method='post'>
+        <form action='/admin/stories/response/{{this.action}}?_method=PUT' method='post'>
           <div class='mb-3'>
             <label for='botRes' class='col-form-label'>回覆內容:</label>
             <textarea class='form-control' id='botRes' name='botRes'>{{this.response}}</textarea>
