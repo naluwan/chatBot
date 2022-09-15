@@ -84,6 +84,9 @@ const adminControllers = {
       })
       .then(() => res.redirect(`/admin/stories?userId=${userId}&storyName=${storyName}`))
       .catch(err => next(err))
+  },
+  createStoryPage: (req, res, next) => {
+    res.render('admin/create-story')
   }
 }
 

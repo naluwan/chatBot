@@ -1,0 +1,24 @@
+<form action='/admin/stories' method='POST' id='createStoryForm'>
+  <div class='mb-4 text-center'>
+    <h1 class='h3 font-weight-normal mb-3'>新增故事</h1>
+  </div>
+  <div class='mb-4 text-center'>
+    <button type='button' class='btn btn-info' id='userStepBtn'>使用者</button>
+    <button type='button' class='btn btn-warning' id='botStepBtn'>機器人</button>
+  </div>
+  <hr />
+  <div class='form-row mb-3'>
+    <h5 class='form-label' for='storyName'>故事名稱</h5>
+    <input
+      class='form-control'
+      type='text'
+      name='storyName'
+      id='storyName'
+      placeholder='請輸入故事名稱'
+      value='{{storyName}}'
+      required
+    />
+  </div>
+
+  <button type='submit' class='btn btn-primary'>Submit</button>
+</form>

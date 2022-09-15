@@ -3,10 +3,10 @@
 </div>
 
 <div class="d-flex flex-row">
-  <div class="col-6">
+  <div class="col-4">
     <form action="/admin/stories" method="get">
       <div class='row mb-3'>
-        <label for="userId" class="col-2 col-form-label">使用者:</label>
+        <label for="userId" class="col-3 col-form-label">使用者:</label>
         <div class="col-6">
           <select name='userId' id='userId' class='form-control' onchange="location.href+='?userId='+this.value">
             <option value="" {{#unless userId}} selected {{/unless}} disabled>請選擇使用者</option>
@@ -25,10 +25,10 @@
       </div>
     </form>
   </div>
-  <div class="col-6">
+  <div class="col-4">
     <form action="/admin/stories" method="get">
       <div class='row mb-3'>
-        <label for="storyName" class="col-2 col-form-label">故事名稱:</label>
+        <label for="storyName" class="col-3 col-form-label">故事名稱:</label>
         <div class="col-6">
           <select name='storyName' id='storyName' class='form-control' onchange="location.href+='&storyName='+this.value">
             {{#unless userId}}
@@ -49,6 +49,11 @@
       </div>
       <input type="text" name="userId" id="userId" value="{{userId}}" readonly style="display: none;">
     </form>
+  </div>
+  <div class="col-4">
+    <a href="/admin/stories/create">
+      <button type="button" class="btn btn-success">新增故事</button>
+    </a>
   </div>
 </div>
 

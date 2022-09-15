@@ -20,6 +20,7 @@ const SESSION_SECRET = 'secret'
 app.engine('hbs', hbs({ extname: '.hbs', helpers: handlebarsHelpers }))
 
 app.set('view engine', 'hbs')
+app.use(express.static('public'))
 app.use(express.urlencoded({ extended: true }))
 app.use(session({ secret: SESSION_SECRET, resave: false, saveUninitialized: false }))
 app.use(passport.initialize())
