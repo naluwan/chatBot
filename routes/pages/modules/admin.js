@@ -1,8 +1,8 @@
 const express = require('express')
 const router = express.Router()
-const adminController = require('../../controllers/admin-controller')
+const adminController = require('../../../controllers/pages/admin-controller')
 
-router.post('/stories', adminController.getStories)
+router.put('/stories/:action', adminController.putResponse)
 router.get('/stories', adminController.getStories)
 router.patch('/users/:id', adminController.patchUser)
 router.get('/users', adminController.getUsers)

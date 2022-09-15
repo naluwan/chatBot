@@ -1,13 +1,13 @@
-const { User, TrainingData } = require('../models')
+const { User, TrainingData } = require('../../models')
 const adminControllers = {
   getStories: (req, res, next) => {
     let stories = true
     return Promise.all([
       User.findAll({ raw: true }),
-      req.body.userId
-        ? TrainingData.findAll({ where: { userId: req.body.userId }, raw: true })
+      req.query.userId
+        ? TrainingData.findAll({ where: { userId: req.query.userId }, raw: true })
         : null,
-      req.body.storyName ? req.body.storyName : null
+      req.query.storyName ? req.query.storyName : null
     ])
       .then(([users, data, storyName]) => {
         if (!data) {
@@ -31,14 +31,14 @@ const adminControllers = {
           const steps = stories.filter(item => item.story === storyName)[0].steps
           return res.render('admin/stories', {
             users,
-            userId: req.body.userId,
+            userId: req.query.userId,
             stories,
             steps,
             storyName
           })
         }
 
-        res.render('admin/stories', { users, userId: req.body.userId, stories })
+        res.render('admin/stories', { users, userId: req.query.userId, stories })
       })
       .catch(err => next(err))
   },
@@ -60,6 +60,29 @@ const adminControllers = {
           res.redirect('/admin/users')
         })
       })
+      .catch(err => next(err))
+  },
+  putResponse: (req, res, next) => {
+    const { userId, storyName, botRes } = req.body
+    const { action } = req.params
+    return TrainingData.findAll({ where: { userId } })
+      .then(data => {
+        /*
+          要使用model.update()，需要使用model.findByPk()來找到資料
+          所以要先用model.findAll()來找到全部資料，再篩選出需要更改的那筆資料，然後取出id
+          再使用model.findByPk(id)來找到該筆資料做操作
+        */
+        const domainId = data.filter(item => item.name === 'domain')[0].id
+        return TrainingData.findByPk(domainId)
+      })
+      .then(domainData => {
+        const domain = JSON.parse(domainData.content)
+        if (!domain.responses[action]) throw new Error('查無此回覆資料，請重新嘗試')
+        domain.responses[action][0].text = botRes
+        console.log(domain.responses.utter_start[0].text)
+        return domainData.update({ content: JSON.stringify(domain) })
+      })
+      .then(() => res.redirect(`/admin/stories?userId=${userId}&storyName=${storyName}`))
       .catch(err => next(err))
   }
 }

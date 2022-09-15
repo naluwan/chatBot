@@ -1,7 +1,7 @@
 const bcrypt = require('bcryptjs')
-const db = require('../models')
+const db = require('../../models')
 const { User, TrainingData } = db
-const trainingDataList = require('../data/defaultTrainingData.json')
+const trainingDataList = require('../../data/defaultTrainingData.json')
 
 const userController = {
   signUpPage: (req, res) => {
