@@ -79,7 +79,6 @@ const adminControllers = {
         const domain = JSON.parse(domainData.content)
         if (!domain.responses[action]) throw new Error('查無此回覆資料，請重新嘗試')
         domain.responses[action][0].text = botRes
-        console.log(domain.responses.utter_start[0].text)
         return domainData.update({ content: JSON.stringify(domain) })
       })
       .then(() => res.redirect(`/admin/stories?userId=${userId}&storyName=${storyName}`))
