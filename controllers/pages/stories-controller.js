@@ -1,6 +1,13 @@
+const { TrainingData } = require('../../models')
+
 const storiesController = {
-  getFragments: (req, res) => {
-    return res.render('stories')
+  getStories: (req, res) => {
+    const { id } = req.user
+    return TrainingData.findAll({ where: { userId: id }, raw: true }).then(data => {
+      console.log(data)
+      const stories = JSON.parse(data.filter(item => item.name === 'fragments')[0].content).stories
+      return res.render('stories', { stories })
+    })
   }
 }
 

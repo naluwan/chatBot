@@ -21,7 +21,7 @@ router.post(
 router.get('/signup', userController.signUpPage)
 router.post('/signup', userController.signUp)
 router.get('/logout', userController.logout)
-router.get('/stories', authenticated, storiesController.getFragments)
+router.get('/stories', authenticated, storiesController.getStories)
 router.get('/', (req, res) => res.redirect('/stories'))
 router.use('/', generalErrorHandler)
 
