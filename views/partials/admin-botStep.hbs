@@ -4,6 +4,44 @@
   </h4>
   <div class='card-body'>
     <h5 class='card-title'>{{this.response}}</h5>
-    <a href='#' class='btn btn-primary mt-3'>編輯</a>
+    <button
+      type='button'
+      class='btn btn-primary mt-5'
+      data-bs-toggle='modal'
+      data-bs-target='#editBotResModal'
+    >編輯</button>
+  </div>
+</div>
+
+<div
+  class='modal fade'
+  id='editBotResModal'
+  tabindex='-1'
+  aria-labelledby='editBotResModalLabel'
+  aria-hidden='true'
+>
+  <div class='modal-dialog modal-dialog-centered'>
+    <div class='modal-content'>
+      <div class='modal-header'>
+        <h5 class='modal-title' id='exampleModalLabel'>編輯機器人回覆</h5>
+        <button type='button' class='btn-close' data-bs-dismiss='modal' aria-label='Close'></button>
+      </div>
+      <div class='modal-body'>
+        <form action='/admin/stories/{{this.action}}?_method=PUT' method='post'>
+          <div class='mb-3'>
+            <label for='botRes' class='col-form-label'>回覆內容:</label>
+            <textarea class='form-control' id='botRes' name='botRes'>{{this.response}}</textarea>
+          </div>
+          <input type='text' value='{{userId}}' name='userId' style='display: none;' />
+          <input type='text' value='{{storyName}}' name='storyName' style='display: none;' />
+          <div class='col-12 d-flex justify-content-end'>
+            <div class='col-3 d-flex justify-content-between'>
+              <button type='button' class='btn btn-secondary' data-bs-dismiss='modal'>取消</button>
+              <button type='submit' class='btn btn-primary'>儲存</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
   </div>
 </div>

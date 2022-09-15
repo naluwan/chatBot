@@ -8,6 +8,8 @@
     {{else}}
       <h5 class='card-title'>意圖: {{this.intent}}</h5>
     {{/if}}
-    <a href='#' class='btn btn-primary mt-3'>編輯</a>
+    {{#ifNot this.intent 'get_started'}}
+      <a href='#' class='btn btn-primary mt-3'>編輯</a>
+    {{/ifNot}}
   </div>
 </div>
