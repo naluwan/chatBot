@@ -41,13 +41,13 @@
           (e.onload = () => {
             window.WebChat.default(
               {
-                customData: { "language": "zh", "userId": `{{user.cpny_id}}`},
+                customData: { "language": "zh", "userId": `{{user.cpnyId}}`},
                 initPayload: "/get_started",
                 socketUrl: "http://192.168.10.105:5005",
                 // socketPath: "/socket.io/",
                 profileAvatar: "/images/jennyhire.jpg",
                 inputTextFieldHint: "請輸入內容....",
-                title: `[測試版]{{user.cpny_name}}小幫手`,
+                title: `[測試版]{{user.cpnyName}}小幫手`,
                 subtitle: "",
                 params: { "storage": "session" },
                 showFullScreenButton: true,

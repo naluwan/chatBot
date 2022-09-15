@@ -8,6 +8,7 @@ const authenticated = (req, res, next) => {
 }
 const authenticatedAdmin = (req, res, next) => {
   if (ensureAuthenticated(req)) {
+    res.locals.isAuthenticated = req.isAuthenticated()
     if (getUser(req).isAdmin) return next()
     res.redirect('/')
   } else {
