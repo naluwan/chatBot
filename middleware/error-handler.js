@@ -9,7 +9,6 @@ module.exports = {
     next(err)
   },
   apiErrorHandler(err, req, res, next) {
-    console.log(typeof err)
     if (err instanceof Error) {
       res.status(err.status || 500).json({
         status: 'error',

@@ -42,10 +42,7 @@ const userServices = {
             return TrainingData.bulkCreate(currentData.trainDataArr)
               .then(() => {
                 cb(null, {
-                  status: 'success',
-                  data: {
-                    user
-                  }
+                  user
                 })
               })
               .catch(err => cb(err))

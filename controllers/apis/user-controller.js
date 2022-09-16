@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken')
 const userServices = require('../../services/user-services')
 const userController = {
-  singIn: (req, res, next) => {
+  signIn: (req, res, next) => {
     try {
       // expiresIn: '30d' => token有效期為30天
       const userData = req.user.toJSON()
@@ -18,8 +18,13 @@ const userController = {
       next(err)
     }
   },
+  signInFail: (err, req, res, next) => {
+    next(err)
+  },
   signUp: (req, res, next) => {
-    userServices.signUp(req, (err, data) => (err ? next(err) : res.json(data)))
+    userServices.signUp(req, (err, data) =>
+      err ? next(err) : res.json({ status: 'success', data })
+    )
   }
 }
 
