@@ -10,6 +10,7 @@ router.get('/stories', authenticated, storiesController.getStories)
 router.post('/signup', userController.signUp)
 router.post(
   '/signin',
+  // 加上failWithError: true和userController.signFail來做錯誤處理
   passport.authenticate('local', { session: false, failWithError: true }),
   userController.signIn,
   userController.signInFail

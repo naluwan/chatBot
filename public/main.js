@@ -25,14 +25,17 @@ function randomBotResName() {
 }
 
 // 建立step template
-function createTemplate(role) {
+function createTemplate(role, stepIndex) {
   const isUser = role === 'user'
   let actionText = ''
   if (role !== 'user') {
     actionText = randomBotResName()
   }
   const stepDiv = document.createElement('div')
-  stepDiv.setAttribute('class', `form-row mb-3 d-flex justify-content-${isUser ? 'start' : 'end'}`)
+  stepDiv.setAttribute(
+    'class',
+    `form-row mb-3 d-flex justify-content-${isUser ? 'start' : 'end'} step`
+  )
   stepDiv.setAttribute('id', `${isUser ? 'userStepDiv' : 'botStepDiv'}`)
   const stepTemplate = `
       <div class='col-8'> 
@@ -53,15 +56,11 @@ function createTemplate(role) {
           <div class='card-body'> 
             <input class='form-control'
               type='text' 
-              name='${isUser ? 'userStep' : 'botStep'}' 
-              id='${isUser ? 'userStep' : 'botStep'}' 
+              name=${isUser ? `userStep_${stepIndex}` : `${actionText}_${stepIndex}`}
+              id=${isUser ? `userStep_${stepIndex}` : `${actionText}_${stepIndex}`}
               placeholder='${isUser ? '請輸入使用者對話' : '請輸入機器人回覆'}'
+              required
             />
-            ${
-              isUser
-                ? ''
-                : `<input type="text" name="botResAction" id="botResAction" value='${actionText}' style="display: none;">`
-            }
           </div>
         </div> 
       </div> 
@@ -95,8 +94,13 @@ function clickUserStepBtn() {
   const userStepBtn = document.querySelector('#userStepBtn')
 
   userStepBtn.addEventListener('click', e => {
-    console.log(456)
-    const userStep = createTemplate('user')
+    const allStep = document.querySelectorAll('.step')
+    let userStep
+    if (!allStep) {
+      userStep = createTemplate('user', '0')
+    } else {
+      userStep = createTemplate('user', allStep.length)
+    }
     document
       .querySelector('#createStoryForm')
       .insertBefore(userStep, document.querySelector('#createStoryForm').lastElementChild)
@@ -115,8 +119,13 @@ function clickBotStepBtn() {
   const botStepBtn = document.querySelector('#botStepBtn')
 
   botStepBtn.addEventListener('click', e => {
-    console.log(789)
-    const botStep = createTemplate('bot')
+    const allStep = document.querySelectorAll('.step')
+    let botStep
+    if (!allStep) {
+      botStep = createTemplate('bot', '0')
+    } else {
+      botStep = createTemplate('bot', allStep.length)
+    }
     document
       .querySelector('#createStoryForm')
       .insertBefore(botStep, document.querySelector('#createStoryForm').lastElementChild)
@@ -131,6 +140,7 @@ function clickBotStepBtn() {
   })
 }
 
+// 網頁載入時執行
 window.onload = () => {
   if (document.querySelector('#createStoryForm')) {
     const isLastUser = document

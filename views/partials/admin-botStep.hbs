@@ -22,26 +22,28 @@
 >
   <div class='modal-dialog modal-dialog-centered'>
     <div class='modal-content'>
-      <div class='modal-header'>
-        <h5 class='modal-title' id='exampleModalLabel'>編輯機器人回覆</h5>
-        <button type='button' class='btn-close' data-bs-dismiss='modal' aria-label='Close'></button>
-      </div>
-      <div class='modal-body'>
-        <form action='/admin/stories/response/{{this.action}}?_method=PUT' method='post'>
-          <div class='mb-3'>
-            <label for='botRes' class='col-form-label'>回覆內容:</label>
-            <textarea class='form-control' id='botRes' name='botRes'>{{this.response}}</textarea>
-          </div>
-          <input type='text' value='{{userId}}' name='userId' style='display: none;' />
-          <input type='text' value='{{storyName}}' name='storyName' style='display: none;' />
-          <div class='col-12 d-flex justify-content-end'>
-            <div class='col-3 d-flex justify-content-between'>
-              <button type='button' class='btn btn-secondary' data-bs-dismiss='modal'>取消</button>
-              <button type='submit' class='btn btn-primary'>儲存</button>
-            </div>
-          </div>
-        </form>
-      </div>
+      <form
+        action='/admin/stories/response/{{userId}}/{{storyName}}/{{this.action}}?_method=PUT'
+        method='post'
+      >
+        <div class='modal-header'>
+          <h5 class='modal-title' id='exampleModalLabel'>編輯機器人回覆</h5>
+          <button
+            type='button'
+            class='btn-close'
+            data-bs-dismiss='modal'
+            aria-label='Close'
+          ></button>
+        </div>
+        <div class='modal-body'>
+          <label for='botRes' class='col-form-label'>回覆內容:</label>
+          <textarea class='form-control' id='botRes' name='botRes'>{{this.response}}</textarea>
+        </div>
+        <div class='modal-footer'>
+          <button type='button' class='btn btn-secondary' data-bs-dismiss='modal'>取消</button>
+          <button type='submit' class='btn btn-primary'>確認</button>
+        </div>
+      </form>
     </div>
   </div>
 </div>

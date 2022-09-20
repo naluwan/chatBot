@@ -31,14 +31,14 @@ const adminControllers = {
           const steps = stories.filter(item => item.story === storyName)[0].steps
           return res.render('admin/stories', {
             users,
-            userId: req.query.userId,
+            userId: Number(req.query.userId),
             stories,
             steps,
             storyName
           })
         }
 
-        res.render('admin/stories', { users, userId: req.query.userId, stories })
+        res.render('admin/stories', { users, userId: Number(req.query.userId), stories })
       })
       .catch(err => next(err))
   },
@@ -63,8 +63,8 @@ const adminControllers = {
       .catch(err => next(err))
   },
   putResponse: (req, res, next) => {
-    const { userId, storyName, botRes } = req.body
-    const { action } = req.params
+    const { botRes } = req.body
+    const { userId, storyName, action } = req.params
     return TrainingData.findAll({ where: { userId } })
       .then(data => {
         /*
@@ -85,7 +85,100 @@ const adminControllers = {
       .catch(err => next(err))
   },
   createStoryPage: (req, res, next) => {
-    res.render('admin/create-story')
+    return User.findAll({ raw: true })
+      .then(users => {
+        res.render('admin/create-story', { users })
+      })
+      .catch(err => next(err))
+  },
+  postStories: (req, res, next) => {
+    const storySteps = []
+    const botRes = []
+    const nluItems = []
+
+    for (const key in req.body) {
+      if (key.includes('_')) {
+        storySteps.push({ [key]: req.body[key] })
+      }
+      if (key.includes('utter')) {
+        botRes.push({ [key]: req.body[key] })
+      }
+      if (key.includes('Step')) {
+        nluItems.push(req.body[key])
+      }
+    }
+
+    const steps = storySteps.map(item => {
+      if (Object.keys(item)[0].includes('utter')) {
+        return { action: Object.keys(item)[0].slice(0, 15) }
+      }
+      return { intent: Object.values(item)[0], user: Object.values(item)[0], entities: [] }
+    })
+
+    const { userId, storyName } = req.body
+    return TrainingData.findAll({ where: { userId } })
+      .then(data => {
+        const storiesId = data.filter(item => item.name === 'fragments')[0].id
+        const nluId = data.filter(item => item.name === 'nlu-json')[0].id
+        const domainId = data.filter(item => item.name === 'domain')[0].id
+        return Promise.all([
+          TrainingData.findByPk(storiesId),
+          TrainingData.findByPk(nluId),
+          TrainingData.findByPk(domainId)
+        ]).then(([storiesData, nluData, domainData]) => {
+          const stories = JSON.parse(storiesData.content).stories
+          const nlu = JSON.parse(nluData.content)
+          const domain = JSON.parse(domainData.content)
+          const repeat = []
+
+          stories.map(item => {
+            if (item.story === storyName) {
+              repeat.push(item)
+            }
+            return item
+          })
+
+          if (repeat.length) {
+            req.flash('error_messages', '故事名稱重複')
+            return res.redirect('back')
+          }
+          nlu.rasa_nlu_data.common_examples.map(item => {
+            return nluItems.forEach(nluItem => {
+              if (nluItem === item.text) {
+                repeat.push(item)
+              }
+            })
+          })
+
+          if (repeat.length) {
+            req.flash('error_messages', '例句重複')
+            return res.redirect('back')
+          }
+
+          stories.push({ story: storyName, steps })
+
+          nluItems.map(nluItem => {
+            return nlu.rasa_nlu_data.common_examples.push({
+              text: nluItem,
+              intent: nluItem,
+              entities: []
+            })
+          })
+
+          botRes.forEach(item => {
+            domain.actions.push(Object.keys(item)[0].slice(0, 15))
+            domain.responses[Object.keys(item)[0].slice(0, 15)] = [{ text: Object.values(item)[0] }]
+          })
+          return Promise.all([
+            storiesData.update({ content: JSON.stringify({ stories }) }),
+            nluData.update({ content: JSON.stringify(nlu) }),
+            domainData.update({ content: JSON.stringify(domain) })
+          ])
+        })
+      })
+      .then(() => res.redirect(`/admin/stories?userId=${userId}&storyName=${storyName}`))
+      .catch(err => next(err))
+  },
   }
 }
 

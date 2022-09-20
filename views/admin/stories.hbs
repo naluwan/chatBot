@@ -8,14 +8,11 @@
       <div class='row mb-3'>
         <label for="userId" class="col-3 col-form-label">使用者:</label>
         <div class="col-6">
-          <select name='userId' id='userId' class='form-control' onchange="location.href+='?userId='+this.value">
+          <select name='userId' id='userId' class='form-control' onchange="location.href='?userId='+this.value">
             <option value="" {{#unless userId}} selected {{/unless}} disabled>請選擇使用者</option>
             {{#each users}}
               {{#ifNot this.cpnyName 'admin'}}
-              <option 
-                value='{{this.id}}'
-                {{#ifCond this.id ../userId}} selected {{/ifCond}}
-              >
+              <option value='{{this.id}}' {{#ifCond this.id ../userId}} selected {{/ifCond}}>
                 {{this.cpnyName}}
               </option>
               {{/ifNot}}
@@ -30,7 +27,7 @@
       <div class='row mb-3'>
         <label for="storyName" class="col-3 col-form-label">故事名稱:</label>
         <div class="col-6">
-          <select name='storyName' id='storyName' class='form-control' onchange="location.href+='&storyName='+this.value">
+          <select name='storyName' id='storyName' class='form-control' onchange="location.href='';location.href='?userId={{userId}}&storyName='+this.value">
             {{#unless userId}}
               <option value="" selected disabled>請先選擇使用者</option>
             {{else}}
@@ -47,7 +44,6 @@
           </select>
         </div>
       </div>
-      <input type="text" name="userId" id="userId" value="{{userId}}" readonly style="display: none;">
     </form>
   </div>
   <div class="col-4">
