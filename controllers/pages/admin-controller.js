@@ -91,7 +91,7 @@ const adminControllers = {
       })
       .catch(err => next(err))
   },
-  postStories: (req, res, next) => {
+  postStory: (req, res, next) => {
     const storySteps = []
     const botRes = []
     const nluItems = []
@@ -173,10 +173,14 @@ const adminControllers = {
             })
           })
 
-          botRes.forEach(item => {
-            domain.actions.push(Object.keys(item)[0].slice(0, 15))
-            domain.responses[Object.keys(item)[0].slice(0, 15)] = [{ text: Object.values(item)[0] }]
-          })
+          if (botRes.length) {
+            botRes.forEach(item => {
+              domain.actions.push(Object.keys(item)[0].slice(0, 15))
+              domain.responses[Object.keys(item)[0].slice(0, 15)] = [
+                { text: Object.values(item)[0] }
+              ]
+            })
+          }
           return Promise.all([
             storiesData.update({ content: JSON.stringify({ stories }) }),
             nluData.update({ content: JSON.stringify(nlu) }),
@@ -223,7 +227,7 @@ const adminControllers = {
             return res.redirect(`/admin/stories?userId=${userId}&storyName=${storyName}`)
           }
 
-          hasStory[0].steps.map(step => {
+          hasStory[0].steps?.map(step => {
             if (step.intent) {
               intentsArr.push(step.intent)
             }
@@ -234,18 +238,24 @@ const adminControllers = {
           })
 
           const updateStories = stories.filter(item => item.story !== storyName)
-          const updateNlu = intentsArr.map(intent => {
-            return nlu.filter(nluItem => nluItem.intent !== intent)[0]
-          })
 
-          console.log(updateNlu.length)
-          const updateActions = actionsArr.map(action => {
-            return domain.actions.filter(actionItem => actionItem !== action)[0]
-          })
-          actionsArr.map(action => {
-            return delete domain.responses[action]
-          })
-          domain.actions = updateActions
+          let updateNlu = nlu
+          if (intentsArr.length) {
+            updateNlu = intentsArr.map(intent => {
+              return nlu.filter(nluItem => nluItem.intent !== intent)[0]
+            })
+          }
+
+          let updateActions
+          if (actionsArr.length) {
+            updateActions = actionsArr.map(action => {
+              return domain.actions.filter(actionItem => actionItem !== action)[0]
+            })
+            actionsArr.map(action => {
+              return delete domain.responses[action]
+            })
+            domain.actions = updateActions
+          }
 
           return Promise.all([
             storiesData.update({ content: JSON.stringify({ stories: updateStories }) }),
