@@ -142,6 +142,14 @@ const adminControllers = {
             req.flash('error_messages', '故事名稱重複')
             return res.redirect('back')
           }
+
+          // 判斷nlu是否有資料，因為刪除故事流程後，如果完全沒有例句資料會變成null，如果檢測到null就代表沒有例句，直接將資料設為空陣列
+          if (
+            nlu.rasa_nlu_data.common_examples.length === 1 &&
+            nlu.rasa_nlu_data.common_examples[0] === null
+          ) {
+            nlu.rasa_nlu_data.common_examples.length = []
+          }
           nlu.rasa_nlu_data.common_examples.map(item => {
             return nluItems.forEach(nluItem => {
               if (nluItem === item.text) {
@@ -179,6 +187,77 @@ const adminControllers = {
       .then(() => res.redirect(`/admin/stories?userId=${userId}&storyName=${storyName}`))
       .catch(err => next(err))
   },
+  deleteStory: (req, res, next) => {
+    const { userId, storyName } = req.params
+    return TrainingData.findAll({ where: { userId } })
+      .then(data => {
+        const storiesId = data.filter(item => item.name === 'fragments')[0].id
+        const nluId = data.filter(item => item.name === 'nlu-json')[0].id
+        const domainId = data.filter(item => item.name === 'domain')[0].id
+        return Promise.all([
+          TrainingData.findByPk(storiesId),
+          TrainingData.findByPk(nluId),
+          TrainingData.findByPk(domainId)
+        ]).then(([storiesData, nluData, domainData]) => {
+          const stories = JSON.parse(storiesData.content).stories
+          const nlu = JSON.parse(nluData.content).rasa_nlu_data.common_examples
+          const domain = JSON.parse(domainData.content)
+          const hasStory = []
+          const intentsArr = []
+          const actionsArr = []
+
+          stories.map(item => {
+            if (item.story === storyName) {
+              hasStory.push(item)
+            }
+            return item
+          })
+
+          if (!hasStory.length) {
+            req.flash('error_messages', '查無此故事資訊，請重新嘗試')
+            return res.redirect(`/admin/stories?userId=${userId}&storyName=${storyName}`)
+          }
+
+          if (hasStory[0].story === '問候語') {
+            req.flash('error_messages', '預設問候語故事流程無法刪除')
+            return res.redirect(`/admin/stories?userId=${userId}&storyName=${storyName}`)
+          }
+
+          hasStory[0].steps.map(step => {
+            if (step.intent) {
+              intentsArr.push(step.intent)
+            }
+            if (step.action) {
+              actionsArr.push(step.action)
+            }
+            return step
+          })
+
+          const updateStories = stories.filter(item => item.story !== storyName)
+          const updateNlu = intentsArr.map(intent => {
+            return nlu.filter(nluItem => nluItem.intent !== intent)[0]
+          })
+
+          console.log(updateNlu.length)
+          const updateActions = actionsArr.map(action => {
+            return domain.actions.filter(actionItem => actionItem !== action)[0]
+          })
+          actionsArr.map(action => {
+            return delete domain.responses[action]
+          })
+          domain.actions = updateActions
+
+          return Promise.all([
+            storiesData.update({ content: JSON.stringify({ stories: updateStories }) }),
+            nluData.update({
+              content: JSON.stringify({ rasa_nlu_data: { common_examples: updateNlu } })
+            }),
+            domainData.update({ content: JSON.stringify(domain) })
+          ])
+        })
+      })
+      .then(() => res.redirect(`/admin/stories?userId=${userId}`))
+      .catch(err => next(err))
   }
 }
 
