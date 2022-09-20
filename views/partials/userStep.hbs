@@ -1,0 +1,65 @@
+<div class='card col-6 m-3'>
+  <h4 class='card-header'>
+    使用者
+  </h4>
+  <div class='card-body'>
+    {{#if this.user}}
+      <h5 class='card-title'>{{this.user}}</h5>
+    {{else}}
+      <h5 class='card-title'>意圖: {{this.intent}}</h5>
+    {{/if}}
+    {{#ifNot this.intent 'get_started'}}
+      <button
+        type='button'
+        class='btn btn-primary mt-5'
+        data-bs-toggle='modal'
+        data-bs-target='#editUserQuesModal'
+      >編輯</button>
+    {{/ifNot}}
+  </div>
+</div>
+
+<div
+  class='modal fade'
+  id='editUserQuesModal'
+  tabindex='-1'
+  aria-labelledby='editUserQuesModalLabel'
+  aria-hidden='true'
+>
+  <div class='modal-dialog modal-dialog-centered'>
+    <div class='modal-content'>
+      <form 
+        action={{#ifCond role 'admin'}}'/admin/stories/userSay/{{userId}}/{{storyName}}?_method=PUT'
+        {{else}}'/stories/userSay/{{userId}}/{{storyName}}?_method=PUT'
+        {{/ifCond}} 
+        method='post'
+      >
+        <div class='modal-header'>
+          <h5 class='modal-title' id='editUserQuesModalLabel'>編輯使用者對話</h5>
+          <button
+            type='button'
+            class='btn-close'
+            data-bs-dismiss='modal'
+            aria-label='Close'
+          ></button>
+        </div>
+        <div class='modal-body'>
+          <label for='userSay' class='col-form-label'>對話內容:</label>
+          <textarea class='form-control' id='userSay' name='userSay'>{{this.user}}</textarea>
+          <input
+            type='text'
+            class='form-control'
+            id='oriUserSay'
+            name='oriUserSay'
+            value='{{this.user}}'
+            style='display: none;'
+          />
+        </div>
+        <div class='modal-footer'>
+          <button type='button' class='btn btn-secondary' data-bs-dismiss='modal'>取消</button>
+          <button type='submit' class='btn btn-primary'>確認</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

@@ -23,11 +23,13 @@
   <div class='modal-dialog modal-dialog-centered'>
     <div class='modal-content'>
       <form
-        action='/admin/stories/response/{{userId}}/{{storyName}}/{{this.action}}?_method=PUT'
+        action={{#ifCond role 'admin'}}'/admin/stories/response/{{userId}}/{{storyName}}/{{this.action}}?_method=PUT'
+        {{else}}'/stories/response/{{userId}}/{{storyName}}/{{this.action}}?_method=PUT'
+        {{/ifCond}}
         method='post'
       >
         <div class='modal-header'>
-          <h5 class='modal-title' id='exampleModalLabel'>編輯機器人回覆</h5>
+          <h5 class='modal-title' id='editBotResModalLabel'>編輯機器人回覆</h5>
           <button
             type='button'
             class='btn-close'

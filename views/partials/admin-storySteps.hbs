@@ -1,11 +1,11 @@
 {{#each steps}}
   {{#if this.intent}}
     <div class="d-flex justify-content-start">
-      {{> admin-userStep}}
+      {{> userStep userId=../userId storyName=../storyName role="admin"}}
     </div>
   {{else}}
     <div class="d-flex justify-content-end">
-      {{> admin-botStep userId=../userId storyName=../storyName}}
+      {{> botStep userId=../userId storyName=../storyName role="admin"}}
     </div>
   {{/if}}
 {{/each}}
