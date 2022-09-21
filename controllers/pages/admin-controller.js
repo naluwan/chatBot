@@ -1,4 +1,5 @@
 const { User, TrainingData } = require('../../models')
+const storiesServices = require('../../services/stories-service')
 const adminControllers = {
   getStories: (req, res, next) => {
     let stories = true
@@ -63,26 +64,14 @@ const adminControllers = {
       .catch(err => next(err))
   },
   putResponse: (req, res, next) => {
-    const { botRes } = req.body
-    const { userId, storyName, action } = req.params
-    return TrainingData.findAll({ where: { userId } })
-      .then(data => {
-        /*
-          要使用model.update()，需要使用model.findByPk()來找到資料
-          所以要先用model.findAll()來找到全部資料，再篩選出需要更改的那筆資料，然後取出id
-          再使用model.findByPk(id)來找到該筆資料做操作
-        */
-        const domainId = data.filter(item => item.name === 'domain')[0].id
-        return TrainingData.findByPk(domainId)
-      })
-      .then(domainData => {
-        const domain = JSON.parse(domainData.content)
-        if (!domain.responses[action]) throw new Error('查無此回覆資料，請重新嘗試')
-        domain.responses[action][0].text = botRes
-        return domainData.update({ content: JSON.stringify(domain) })
-      })
-      .then(() => res.redirect(`/admin/stories?userId=${userId}&storyName=${storyName}`))
-      .catch(err => next(err))
+    const { userId, storyName } = req.params
+    storiesServices.putResponse(req, (err, data) => {
+      if (err) return next(err)
+
+      req.flash('success_message', '更新機器人回覆成功')
+      req.session.updateStory = data
+      return res.redirect(`/admin/stories?userId=${userId}&storyName=${storyName}`)
+    })
   },
   putUserSay: (req, res, next) => {
     const { userId, storyName } = req.params

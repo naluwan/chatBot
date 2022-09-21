@@ -12,7 +12,7 @@
     {{/ifNot}}
   </div>
   <hr />
-    {{> storySteps steps=story.steps}}
+    {{> storySteps userId=user.id storyName=story.story steps=story.steps}}
   <hr />
   <div class="d-flex justify-content-center">
     <a href="/stories" class="btn btn-secondary btn-block col-2">返回</a>

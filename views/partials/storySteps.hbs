@@ -1,11 +1,11 @@
 {{#each steps}}
   {{#if this.intent}}
     <div class="d-flex justify-content-start">
-      {{> userStep role="user"}}
+      {{> userStep userId=../userId storyName=../storyName role="user"}}
     </div>
   {{else}}
     <div class="d-flex justify-content-end">
-      {{> botStep role="user"}}
+      {{> botStep userId=../userId storyName=../storyName role="user"}}
     </div>
   {{/if}}
 {{/each}}
