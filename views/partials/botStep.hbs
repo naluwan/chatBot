@@ -40,6 +40,14 @@
         <div class='modal-body'>
           <label for='botRes' class='col-form-label'>回覆內容:</label>
           <textarea class='form-control' id='botRes' name='botRes'>{{this.response}}</textarea>
+          <input
+            type='text'
+            class='form-control'
+            id='oriBotRes'
+            name='oriBotRes'
+            value='{{this.response}}'
+            style='display: none;'
+          />
         </div>
         <div class='modal-footer'>
           <button type='button' class='btn btn-secondary' data-bs-dismiss='modal'>取消</button>

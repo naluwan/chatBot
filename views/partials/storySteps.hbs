@@ -1,0 +1,11 @@
+{{#each steps}}
+  {{#if this.intent}}
+    <div class="d-flex justify-content-start">
+      {{> userStep role="user"}}
+    </div>
+  {{else}}
+    <div class="d-flex justify-content-end">
+      {{> botStep role="user"}}
+    </div>
+  {{/if}}
+{{/each}}
