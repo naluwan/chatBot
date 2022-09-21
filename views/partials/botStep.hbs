@@ -3,10 +3,12 @@
     機器人回覆
   </h4>
   <div class='card-body'>
-    <h5 class='card-title'>{{this.response}}</h5>
+    <textarea class='col-12' rows="5" style="background-color: rgba(0,0,0,.03);font-size: 1.25rem;" readonly>{{this.response}}</textarea>
+  </div>
+  <div class='modal-footer'>
     <button
       type='button'
-      class='btn btn-primary mt-5'
+      class='btn btn-primary'
       data-bs-toggle='modal'
       data-bs-target='#editBotResModal'
     >編輯</button>
@@ -39,7 +41,7 @@
         </div>
         <div class='modal-body'>
           <label for='botRes' class='col-form-label'>回覆內容:</label>
-          <textarea class='form-control' id='botRes' name='botRes'>{{this.response}}</textarea>
+          <textarea class='form-control content' id='botRes' name='botRes' rows="5" style="font-size: 1.25rem;">{{this.response}}</textarea>
           <input
             type='text'
             class='form-control'

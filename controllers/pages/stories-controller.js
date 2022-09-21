@@ -22,6 +22,16 @@ const storiesController = {
       return res.redirect(`/stories/${storyName}`)
     })
   },
+  putUserSay: (req, res, next) => {
+    const { storyName } = req.params
+    storiesServices.putUserSay(req, (err, data) => {
+      if (err) return next(err)
+
+      req.flash('success_message', '更新使用者對話成功')
+      req.session.updateStory = data
+      return res.redirect(`/stories/${storyName}`)
+    })
+  },
   getAllActions: (req, res, next) => {
     const { id } = req.user
     return TrainingData.findAll({ where: { userId: id }, raw: true })

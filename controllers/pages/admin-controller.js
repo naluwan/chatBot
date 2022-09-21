@@ -75,50 +75,13 @@ const adminControllers = {
   },
   putUserSay: (req, res, next) => {
     const { userId, storyName } = req.params
-    const { userSay, oriUserSay } = req.body
-    if (userSay === oriUserSay) return
-    return TrainingData.findAll({ where: { userId } })
-      .then(data => {
-        const storiesId = data.filter(item => item.name === 'fragments')[0].id
-        const nluId = data.filter(item => item.name === 'nlu-json')[0].id
-        return Promise.all([TrainingData.findByPk(storiesId), TrainingData.findByPk(nluId)])
-      })
-      .then(([storiesData, nluData]) => {
-        const stories = JSON.parse(storiesData.content).stories
-        const nlu = JSON.parse(nluData.content)
-        stories.map(item => {
-          if (item.story === storyName) {
-            item.steps.map(step => {
-              console.log(step.text === oriUserSay && step.intent === oriUserSay)
-              if (step.user === oriUserSay && step.intent === oriUserSay) {
-                step.user = userSay
-                step.intent = userSay
-              }
-              return item
-            })
-          }
-          return item
-        })
+    storiesServices.putUserSay(req, (err, data) => {
+      if (err) return next(err)
 
-        if (nlu.rasa_nlu_data.common_examples.length) {
-          nlu.rasa_nlu_data.common_examples.map(nluItem => {
-            if (nluItem.intent === oriUserSay && nluItem.text === oriUserSay) {
-              nluItem.text = userSay
-              nluItem.intent = userSay
-            }
-            if (nluItem.intent === oriUserSay) {
-              nluItem.intent = userSay
-            }
-            return nluItem
-          })
-        }
-        return Promise.all([
-          storiesData.update({ content: JSON.stringify({ stories }) }),
-          nluData.update({ content: JSON.stringify(nlu) })
-        ])
-      })
-      .then(() => res.redirect(`/admin/stories?userId=${userId}&storyName=${storyName}`))
-      .catch(err => next(err))
+      req.flash('success_message', '更新使用者對話成功')
+      req.session.updateStory = data
+      return res.redirect(`/admin/stories?userId=${userId}&storyName=${storyName}`)
+    })
   },
   createStoryPage: (req, res, next) => {
     return User.findAll({ raw: true })

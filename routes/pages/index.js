@@ -21,7 +21,12 @@ router.post(
 router.get('/signup', userController.signUpPage)
 router.post('/signup', userController.signUp)
 router.get('/logout', userController.logout)
-router.put('/stories/response/:userId/:storyName/:action', storiesController.putResponse)
+router.put(
+  '/stories/response/:userId/:storyName/:action',
+  authenticated,
+  storiesController.putResponse
+)
+router.put('/stories/userSay/:userId/:storyName', authenticated, storiesController.putUserSay)
 router.get('/stories/actions', authenticated, storiesController.getAllActions)
 router.get('/stories/:storyName', authenticated, storiesController.getStory)
 router.get('/stories', authenticated, storiesController.getStories)
