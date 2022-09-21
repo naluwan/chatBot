@@ -11,6 +11,25 @@ const storiesServices = {
       })
       .catch(err => cb(err))
   },
+  getStory: (req, cb) => {
+    const { id } = req.user
+    const { storyName } = req.params
+    return TrainingData.findAll({ where: { userId: id } })
+      .then(data => {
+        const stories = JSON.parse(
+          data.filter(item => item.name === 'fragments')[0].content
+        ).stories
+        const responses = JSON.parse(
+          data.filter(item => item.name === 'domain')[0].content
+        ).responses
+        const story = stories.filter(item => item.story === storyName)[0]
+        story.steps.map(step => {
+          return step.action ? (step.response = responses[step.action][0].text) : step
+        })
+        return cb(null, { story })
+      })
+      .catch(err => cb(err))
+  },
   putResponse: (req, cb) => {
     const { botRes, oriBotRes } = req.body
     const { userId, storyName, action } = req.params

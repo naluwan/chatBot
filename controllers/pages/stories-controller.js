@@ -8,23 +8,19 @@ const storiesController = {
     )
   },
   getStory: (req, res, next) => {
-    const { id } = req.user
+    storiesServices.getStory(req, (err, data) =>
+      err ? next(err) : res.render('story', { story: data.story })
+    )
+  },
+  putResponse: (req, res, next) => {
     const { storyName } = req.params
-    return TrainingData.findAll({ where: { userId: id } })
-      .then(data => {
-        const stories = JSON.parse(
-          data.filter(item => item.name === 'fragments')[0].content
-        ).stories
-        const responses = JSON.parse(
-          data.filter(item => item.name === 'domain')[0].content
-        ).responses
-        const story = stories.filter(item => item.story === storyName)[0]
-        story.steps.map(step => {
-          return step.action ? (step.response = responses[step.action][0].text) : step
-        })
-        res.render('story', { story })
-      })
-      .catch(err => next(err))
+    storiesServices.putResponse(req, (err, data) => {
+      if (err) return next(err)
+
+      req.flash('success_message', '更新機器人回覆成功')
+      req.session.updateStory = data
+      return res.redirect(`/stories/${storyName}`)
+    })
   },
   getAllActions: (req, res, next) => {
     const { id } = req.user

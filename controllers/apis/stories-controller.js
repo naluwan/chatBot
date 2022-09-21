@@ -5,6 +5,11 @@ const storiesController = {
     storiesServices.getStories(req, (err, data) =>
       err ? next(err) : res.json({ status: 'success', data })
     )
+  },
+  getStory: (req, res, next) => {
+    storiesServices.getStory(req, (err, data) =>
+      err ? next(err) : res.json({ status: 'success', data })
+    )
   }
 }
 

@@ -6,6 +6,7 @@ const userController = require('../../controllers/apis/user-controller')
 const { authenticated } = require('../../middleware/api-auth')
 const { apiErrorHandler } = require('../../middleware/error-handler')
 
+router.get('/stories/:storyName', authenticated, storiesController.getStory)
 router.get('/stories', authenticated, storiesController.getStories)
 router.post('/signup', userController.signUp)
 router.post(
