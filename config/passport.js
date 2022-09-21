@@ -30,7 +30,7 @@ passport.use(
         if (!user) return cb(null, false, req.flash('error_messages', '帳號或密碼輸入錯誤'))
         bcrypt.compare(password, user.password).then(res => {
           // 密碼錯誤
-          if (!res) return cb(null, false, new Error('錯誤'))
+          if (!res) return cb(null, false, req.flash('error_messages', '帳號或密碼輸入錯誤'))
 
           // 驗證通過
           return cb(null, user)

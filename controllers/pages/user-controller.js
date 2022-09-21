@@ -18,9 +18,12 @@ const userController = {
     res.redirect('/stories')
   },
   logout: (req, res, next) => {
-    req.flash('success_messages', '登出成功')
-    req.logout(err => next(err))
-    res.redirect('/signin')
+    // req.logout現在是非同步，所以需要使用callback function來執行
+    req.logout(err => {
+      if (err) return next(err)
+      req.flash('success_messages', '登出成功')
+      res.redirect('/signin')
+    })
   }
 }
 
