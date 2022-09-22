@@ -23,31 +23,20 @@ const userServices = {
           password: hash
         })
       )
-      .then(() => {
-        User.findOne({ where: { email }, raw: true })
-          .then(user => {
-            const trainDataArr = trainingDataList.map(data => {
-              const content = JSON.stringify(data.content)
+      .then(createUser => {
+        const user = createUser.toJSON()
 
-              return {
-                name: data.name,
-                content,
-                userId: user.id
-              }
-            })
-            return { trainDataArr, user }
-          })
-          .then(currentData => {
-            const user = currentData.user
-            return TrainingData.bulkCreate(currentData.trainDataArr)
-              .then(() => {
-                cb(null, {
-                  user
-                })
-              })
-              .catch(err => cb(err))
-          })
-          .catch(err => cb(err))
+        const trainDataArr = trainingDataList.map(data => {
+          const content = JSON.stringify(data.content)
+
+          return {
+            name: data.name,
+            content,
+            userId: user.id
+          }
+        })
+
+        return TrainingData.bulkCreate(trainDataArr).then(() => cb(null, user))
       })
       .catch(err => cb(err))
   }
