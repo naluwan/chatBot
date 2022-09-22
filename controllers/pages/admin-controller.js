@@ -21,10 +21,12 @@ const adminControllers = {
 
         stories.map(item => {
           return item.steps.map(step => {
-            if (step.action) {
-              step.response = responses[step.action][0].text
-            }
-            return step
+            // 將資料庫中rasa的機器人回覆格式(  \n)轉成網頁能分段的格式(\r)
+            return step.action
+              ? (step.response = JSON.parse(
+                  JSON.stringify(responses[step.action][0].text).replace(/ \\n/g, '\\r')
+                ))
+              : step
           })
         })
 

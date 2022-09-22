@@ -41,9 +41,9 @@ const storiesServices = {
       return cb(null)
     }
 
-    console.log('botRes:', JSON.stringify(botRes))
+    // 將機器人回覆中的換行(\r\n)改成符合rasa機器人回覆的格式(  \n)
     const botResText = JSON.parse(JSON.stringify(botRes).replace(/\\r\\n/g, '  \\n'))
-    console.log('botResText:', JSON.stringify(botResText))
+
     return TrainingData.findAll({ where: { userId } })
       .then(data => {
         /*
