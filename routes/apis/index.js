@@ -12,6 +12,7 @@ router.put(
   storiesController.putResponse
 )
 router.put('/stories/userSay/:userId/:storyName', authenticated, storiesController.putUserSay)
+router.delete('/stories/:storyName', authenticated, storiesController.deleteStory)
 router.get('/stories/:storyName', authenticated, storiesController.getStory)
 router.post('/stories', authenticated, storiesController.postStory)
 router.get('/stories', authenticated, storiesController.getStories)

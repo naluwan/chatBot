@@ -25,6 +25,13 @@ const storiesController = {
     storiesServices.putUserSay(req, (err, data) =>
       err ? next(err) : res.json({ status: 'success', data })
     )
+  },
+  deleteStory: (req, res, next) => {
+    storiesServices.deleteStory(req, (err, data) => {
+      if (err) return next(err)
+      console.log(data)
+      res.json({ status: 'success', data })
+    })
   }
 }
 

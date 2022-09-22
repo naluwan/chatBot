@@ -224,6 +224,86 @@ const storiesServices = {
         })
       })
       .catch(err => cb(err))
+  },
+  deleteStory: (req, cb) => {
+    const userId = req.params.userId ? req.params.userId : req.user.id
+    const { storyName } = req.params
+    let deleteStory
+    return TrainingData.findAll({ where: { userId } })
+      .then(data => {
+        const storiesId = data.filter(item => item.name === 'fragments')[0].id
+        const nluId = data.filter(item => item.name === 'nlu-json')[0].id
+        const domainId = data.filter(item => item.name === 'domain')[0].id
+        return Promise.all([
+          TrainingData.findByPk(storiesId),
+          TrainingData.findByPk(nluId),
+          TrainingData.findByPk(domainId)
+        ]).then(([storiesData, nluData, domainData]) => {
+          const stories = JSON.parse(storiesData.content).stories
+          const nlu = JSON.parse(nluData.content).rasa_nlu_data.common_examples
+          const domain = JSON.parse(domainData.content)
+          const hasStory = []
+          const intentsArr = []
+          const actionsArr = []
+
+          stories.map(item => {
+            if (item.story === storyName) {
+              hasStory.push(item)
+            }
+            return item
+          })
+
+          if (!hasStory.length) throw new Error('查無此故事資訊，請重新嘗試')
+
+          if (hasStory[0].story === '問候語') throw new Error('預設問候語故事流程無法刪除')
+
+          hasStory[0].steps?.map(step => {
+            if (step.intent) {
+              intentsArr.push(step.intent)
+            }
+            if (step.action) {
+              actionsArr.push(step.action)
+            }
+            return step
+          })
+
+          const updateStories = stories.filter(item => item.story !== storyName)
+          deleteStory = stories.filter(item => item.story === storyName)
+
+          let updateNlu = nlu
+          let updateIntents
+          if (intentsArr.length) {
+            updateNlu = intentsArr.map(intent => {
+              return nlu.filter(nluItem => nluItem.intent !== intent)[0]
+            })
+            updateIntents = intentsArr.map(intent => {
+              return domain.intents.filter(domainIntent => domainIntent !== intent)[0]
+            })
+          }
+          domain.intents = updateIntents
+
+          let updateActions
+          if (actionsArr.length) {
+            updateActions = actionsArr.map(action => {
+              return domain.actions.filter(actionItem => actionItem !== action)[0]
+            })
+            actionsArr.map(action => {
+              return delete domain.responses[action]
+            })
+            domain.actions = updateActions
+          }
+
+          return Promise.all([
+            storiesData.update({ content: JSON.stringify({ stories: updateStories }) }),
+            nluData.update({
+              content: JSON.stringify({ rasa_nlu_data: { common_examples: updateNlu } })
+            }),
+            domainData.update({ content: JSON.stringify(domain) })
+          ])
+        })
+      })
+      .then(() => cb(null, { story: deleteStory }))
+      .catch(err => cb(err))
   }
 }
 

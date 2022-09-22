@@ -44,6 +44,14 @@ const storiesController = {
   createStoryPage: (req, res, next) => {
     res.render('create-story')
   },
+  deleteStory: (req, res, next) => {
+    const { storyName } = req.params
+    storiesServices.deleteStory(req, (err, data) => {
+      if (err) return next(err)
+      req.flash('success_messages', `成功刪除『${storyName}』`)
+      return res.redirect('/stories')
+    })
+  },
   getAllActions: (req, res, next) => {
     const { id } = req.user
     return TrainingData.findAll({ where: { userId: id }, raw: true })

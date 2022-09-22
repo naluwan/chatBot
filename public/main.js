@@ -145,4 +145,17 @@ window.onload = () => {
     clickUserStepBtn()
     clickBotStepBtn()
   }
+  if (document.querySelector('#deleteStoryBtn')) {
+    const deleteBtns = document.querySelectorAll('#deleteStoryBtn')
+    deleteBtns.forEach(deleteBtn => {
+      deleteBtn.addEventListener('click', e => {
+        const target = e.target
+        console.log(target)
+        const deleteText = document.querySelector('#deleteText')
+        const deleteForm = document.querySelector('#deleteForm')
+        deleteForm.action = `/stories/${target.dataset.story}?_method=delete`
+        deleteText.innerText = target.dataset.story
+      })
+    })
+  }
 }
