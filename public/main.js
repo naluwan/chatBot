@@ -76,9 +76,7 @@ function clickDeleteBtn() {
     deleteBtn.addEventListener('click', e => {
       const target = e.target
       target.parentElement.parentElement.parentElement.parentElement.parentElement.remove()
-      const isLastUser = document
-        .querySelector('#createStoryForm')
-        .lastElementChild.previousElementSibling.getAttribute('id')
+      const isLastUser = document.querySelector('.step-panel').lastElementChild.getAttribute('id')
       const userStepBtn = document.querySelector('#userStepBtn')
       if (isLastUser === 'userStepDiv') {
         userStepBtn.setAttribute('disabled', '')
@@ -95,22 +93,19 @@ function clickUserStepBtn() {
 
   userStepBtn.addEventListener('click', e => {
     const allStep = document.querySelectorAll('.step')
+
     let userStep
     if (!allStep) {
       userStep = createTemplate('user', '0')
     } else {
       userStep = createTemplate('user', allStep.length)
     }
-    document
-      .querySelector('#createStoryForm')
-      .insertBefore(userStep, document.querySelector('#createStoryForm').lastElementChild)
+
+    document.querySelector('.step-panel').appendChild(userStep)
+
     clickDeleteBtn()
-    const isLastUser = document
-      .querySelector('#createStoryForm')
-      .lastElementChild.previousElementSibling.getAttribute('id')
-    if (isLastUser === 'userStepDiv') {
-      userStepBtn.setAttribute('disabled', '')
-    }
+
+    userStepBtn.setAttribute('disabled', '')
   })
 }
 
@@ -126,17 +121,12 @@ function clickBotStepBtn() {
     } else {
       botStep = createTemplate('bot', allStep.length)
     }
-    document
-      .querySelector('#createStoryForm')
-      .insertBefore(botStep, document.querySelector('#createStoryForm').lastElementChild)
+
+    document.querySelector('.step-panel').appendChild(botStep)
     clickDeleteBtn()
-    const isLastUser = document
-      .querySelector('#createStoryForm')
-      .lastElementChild.previousElementSibling.getAttribute('id')
-    if (isLastUser !== 'userStepDiv') {
-      const userStepBtn = document.querySelector('#userStepBtn')
-      userStepBtn.removeAttribute('disabled')
-    }
+
+    const userStepBtn = document.querySelector('#userStepBtn')
+    userStepBtn.removeAttribute('disabled')
   })
 }
 

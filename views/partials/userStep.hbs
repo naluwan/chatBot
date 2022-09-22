@@ -9,16 +9,16 @@
       <h5 class='card-title'>意圖: {{this.intent}}</h5>
     {{/if}}
   </div>
-  <div class='modal-footer'>
-    {{#ifNot this.intent 'get_started'}}
+  {{#ifNot this.intent 'get_started'}}
+    <div class='modal-footer'>
       <button
           type='button'
           class='btn btn-primary'
           data-bs-toggle='modal'
           data-bs-target='#editUserQuesModal'
       >編輯</button>
-    {{/ifNot}}
-  </div>
+    </div>
+  {{/ifNot}}
 </div>
 
 <div
