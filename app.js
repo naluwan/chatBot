@@ -12,6 +12,7 @@ const methodOverride = require('method-override')
 const handlebarsHelpers = require('./helpers/handlebars-helpers')
 const { getUser } = require('./helpers/auth-helpers')
 const { pages, apis } = require('./routes')
+const cors = require('cors')
 
 const app = express()
 const port = process.env.PORT || 3333
@@ -22,6 +23,14 @@ app.set('view engine', 'hbs')
 app.use(express.static('public'))
 app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
+app.use(
+  cors({
+    credentials: true,
+    preflightContinue: true,
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    origin: true
+  })
+)
 app.use(session({ secret: process.env.SESSION_SECRET, resave: false, saveUninitialized: false }))
 app.use(passport.initialize())
 app.use(passport.session())
