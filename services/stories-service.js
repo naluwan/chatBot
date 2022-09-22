@@ -1,5 +1,5 @@
 const { TrainingData } = require('../models')
-const { getUpdateStory } = require('../helpers/model-helpers')
+const { getStoryInfo } = require('../helpers/model-helpers')
 
 const storiesServices = {
   getStories: (req, cb) => {
@@ -16,24 +16,8 @@ const storiesServices = {
   getStory: (req, cb) => {
     const { id } = req.user
     const { storyName } = req.params
-    return TrainingData.findAll({ where: { userId: id } })
-      .then(data => {
-        const stories = JSON.parse(
-          data.filter(item => item.name === 'fragments')[0].content
-        ).stories
-        const responses = JSON.parse(
-          data.filter(item => item.name === 'domain')[0].content
-        ).responses
-        const story = stories.filter(item => item.story === storyName)[0]
-        story.steps.map(step => {
-          return step.action
-            ? (step.response = JSON.parse(
-                JSON.stringify(responses[step.action][0].text).replace(/ \\n/g, '\\r')
-              ))
-            : step
-        })
-        return cb(null, { story })
-      })
+    return getStoryInfo(id, storyName, cb)
+      .then(story => cb(null, { story }))
       .catch(err => cb(err))
   },
   postStory: (req, cb) => {
@@ -150,7 +134,7 @@ const storiesServices = {
         })
       })
       .then(() => {
-        return getUpdateStory(userId, storyName, cb).then(updateStory => {
+        return getStoryInfo(userId, storyName, cb).then(updateStory => {
           cb(null, { story: updateStory })
         })
       })
@@ -183,7 +167,7 @@ const storiesServices = {
         return domainData.update({ content: JSON.stringify(domain) })
       })
       .then(() => {
-        return getUpdateStory(userId, storyName, cb).then(updateStory => {
+        return getStoryInfo(userId, storyName, cb).then(updateStory => {
           cb(null, { story: updateStory })
         })
       })
@@ -235,7 +219,7 @@ const storiesServices = {
         ])
       })
       .then(() => {
-        return getUpdateStory(userId, storyName, cb).then(updateStory => {
+        return getStoryInfo(userId, storyName, cb).then(updateStory => {
           cb(null, { story: updateStory })
         })
       })
