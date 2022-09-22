@@ -95,18 +95,23 @@ const adminControllers = {
     const botRes = []
     const nluItems = []
 
+    // 將req.body裡的東西做分類
     for (const key in req.body) {
       if (key.includes('_')) {
+        // 故事流程
         storySteps.push({ [key]: req.body[key] })
       }
       if (key.includes('utter')) {
+        // 機器人回覆
         botRes.push({ [key]: req.body[key] })
       }
       if (key.includes('Step')) {
+        // 獲取使用者對話的例句和意圖(目前只有例句)
         nluItems.push(req.body[key])
       }
     }
 
+    // 將故事流程組成步驟
     const steps = storySteps.map(item => {
       if (Object.keys(item)[0].includes('utter')) {
         return { action: Object.keys(item)[0].slice(0, 15) }
@@ -130,6 +135,7 @@ const adminControllers = {
           const domain = JSON.parse(domainData.content)
           const repeat = []
 
+          // 驗證故事名稱是否重複
           stories.map(item => {
             if (item.story === storyName) {
               repeat.push(item)
@@ -142,13 +148,20 @@ const adminControllers = {
             return res.redirect('back')
           }
 
-          // 判斷nlu是否有資料，因為刪除故事流程後，如果完全沒有例句資料會變成null，如果檢測到null就代表沒有例句，直接將資料設為空陣列
+          // 判斷nlu是否有資料，因為刪除故事流程後，完全沒有例句資料會變成null，如果檢測到null就代表沒有例句，直接將資料設為空陣列
           if (
             nlu.rasa_nlu_data.common_examples.length === 1 &&
             nlu.rasa_nlu_data.common_examples[0] === null
           ) {
-            nlu.rasa_nlu_data.common_examples.length = []
+            nlu.rasa_nlu_data.common_examples = []
           }
+
+          // 判斷domain intents是否有資料，因為刪除故事流程後，完全沒有意圖資料會變成null，如果檢測到null就代表沒有意圖，直接將資料設為空陣列
+          if (domain.intents.length === 1 && domain.intents[0] === null) {
+            domain.intents = []
+          }
+
+          // 驗證例句是否重複
           nlu.rasa_nlu_data.common_examples.map(item => {
             return nluItems.forEach(nluItem => {
               if (nluItem === item.text) {
@@ -162,16 +175,21 @@ const adminControllers = {
             return res.redirect('back')
           }
 
+          // 將故事寫入fragments訓練檔
           stories.push({ story: storyName, steps })
 
+          // 將使用者例句寫入nlu和domain訓練檔
           nluItems.map(nluItem => {
-            return nlu.rasa_nlu_data.common_examples.push({
+            nlu.rasa_nlu_data.common_examples.push({
               text: nluItem,
               intent: nluItem,
               entities: []
             })
+            domain.intents.push(nluItem)
+            return nluItem
           })
 
+          // 將機器人回覆寫入domain訓練檔
           if (botRes.length) {
             botRes.forEach(item => {
               domain.actions.push(Object.keys(item)[0].slice(0, 15))
@@ -239,11 +257,16 @@ const adminControllers = {
           const updateStories = stories.filter(item => item.story !== storyName)
 
           let updateNlu = nlu
+          let updateIntents
           if (intentsArr.length) {
             updateNlu = intentsArr.map(intent => {
               return nlu.filter(nluItem => nluItem.intent !== intent)[0]
             })
+            updateIntents = intentsArr.map(intent => {
+              return domain.intents.filter(domainIntent => domainIntent !== intent)[0]
+            })
           }
+          domain.intents = updateIntents
 
           let updateActions
           if (actionsArr.length) {
