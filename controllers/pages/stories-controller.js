@@ -12,6 +12,15 @@ const storiesController = {
       err ? next(err) : res.render('story', { story: data.story })
     )
   },
+  postStory: (req, res, next) => {
+    const { storyName } = req.body
+    storiesServices.postStory(req, (err, data) => {
+      if (err) return next(err)
+
+      req.flash('success_messages', `新增故事『${storyName}』成功`)
+      return res.redirect(`/stories?storyName=${storyName}`)
+    })
+  },
   putResponse: (req, res, next) => {
     const { storyName } = req.params
     storiesServices.putResponse(req, (err, data) => {

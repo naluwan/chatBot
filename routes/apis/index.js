@@ -13,6 +13,7 @@ router.put(
 )
 router.put('/stories/userSay/:userId/:storyName', authenticated, storiesController.putUserSay)
 router.get('/stories/:storyName', authenticated, storiesController.getStory)
+router.post('/stories', authenticated, storiesController.postStory)
 router.get('/stories', authenticated, storiesController.getStories)
 router.post('/signup', userController.signUp)
 router.post(
