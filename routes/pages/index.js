@@ -26,6 +26,7 @@ router.put(
   authenticated,
   storiesController.putResponse
 )
+router.get('/stories/create', authenticated, storiesController.createStoryPage)
 router.put('/stories/userSay/:userId/:storyName', authenticated, storiesController.putUserSay)
 router.get('/stories/actions', authenticated, storiesController.getAllActions)
 router.get('/stories/:storyName', authenticated, storiesController.getStory)

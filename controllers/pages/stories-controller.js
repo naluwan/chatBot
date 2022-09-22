@@ -32,6 +32,9 @@ const storiesController = {
       return res.redirect(`/stories/${storyName}`)
     })
   },
+  createStoryPage: (req, res, next) => {
+    res.render('create-story')
+  },
   getAllActions: (req, res, next) => {
     const { id } = req.user
     return TrainingData.findAll({ where: { userId: id }, raw: true })
