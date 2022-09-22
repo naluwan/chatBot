@@ -70,7 +70,7 @@ const adminControllers = {
     storiesServices.putResponse(req, (err, data) => {
       if (err) return next(err)
 
-      req.flash('success_message', '更新機器人回覆成功')
+      req.flash('success_messages', '更新機器人回覆成功')
       req.session.updateStory = data
       return res.redirect(`/admin/stories?userId=${userId}&storyName=${storyName}`)
     })
@@ -80,7 +80,7 @@ const adminControllers = {
     storiesServices.putUserSay(req, (err, data) => {
       if (err) return next(err)
 
-      req.flash('success_message', '更新使用者對話成功')
+      req.flash('success_messages', '更新使用者對話成功')
       req.session.updateStory = data
       return res.redirect(`/admin/stories?userId=${userId}&storyName=${storyName}`)
     })
