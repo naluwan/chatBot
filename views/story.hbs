@@ -1,15 +1,5 @@
   <div class="d-flex justify-content-between align-items-end">
     <h3><strong>{{story.story}}</strong></h3>
-    {{#ifNot story.story '問候語'}}
-      <button
-        type='button'
-        class='btn btn-danger mt-5'
-        data-bs-toggle='modal'
-        data-bs-target='#deleteStoryModal'
-      >
-        刪除故事
-      </button>
-    {{/ifNot}}
   </div>
   <hr />
     {{> storySteps userId=user.id storyName=story.story steps=story.steps}}
@@ -17,34 +7,3 @@
   <div class="d-flex justify-content-center">
     <a href="/stories" class="btn btn-secondary btn-block col-2">返回</a>
   </div>
-
-  <div
-  class='modal fade'
-  id='deleteStoryModal'
-  tabindex='-1'
-  aria-labelledby='deleteStoryModalLabel'
-  aria-hidden='true'
->
-  <div class='modal-dialog modal-dialog-centered'>
-    <div class='modal-content'>
-      <form action='/stories/{{story.story}}?_method=delete' id='deleteForm' method='post'>
-        <div class='modal-header'>
-          <h5 class='modal-title' id='deleteStoryModalLabel'>刪除故事</h5>
-          <button
-            type='button'
-            class='btn-close'
-            data-bs-dismiss='modal'
-            aria-label='Close'
-          ></button>
-        </div>
-        <div class='modal-body'>
-          <p>確定要刪除『<strong>{{story.story}}</strong>』故事嗎?</p>
-        </div>
-        <div class='modal-footer'>
-          <button type='button' class='btn btn-secondary' data-bs-dismiss='modal'>取消</button>
-          <button type='submit' class='btn btn-primary'>確認</button>
-        </div>
-      </form>
-    </div>
-  </div>
-</div>
