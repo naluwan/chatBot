@@ -152,6 +152,12 @@ const storiesServices = {
 
     return TrainingData.findAll({ where: { userId } })
       .then(data => {
+        // 驗證此故事是否存在
+        const stories = JSON.parse(
+          data.filter(item => item.name === 'fragments')[0].content
+        ).stories
+        const hasStory = stories.filter(item => item.story === storyName)
+        if (!hasStory.length) throw new Error('查無此故事資料，請重新嘗試')
         /*
           要使用model.update()，需要使用model.findByPk()來找到資料
           所以要先用model.findAll()來找到全部資料，再篩選出需要更改的那筆資料，然後取出id
@@ -181,6 +187,13 @@ const storiesServices = {
     }
     return TrainingData.findAll({ where: { userId } })
       .then(data => {
+        // 驗證此故事是否存在
+        const stories = JSON.parse(
+          data.filter(item => item.name === 'fragments')[0].content
+        ).stories
+        const hasStory = stories.filter(item => item.story === storyName)
+        if (!hasStory.length) throw new Error('查無此故事資料，請重新嘗試')
+
         const storiesId = data.filter(item => item.name === 'fragments')[0].id
         const nluId = data.filter(item => item.name === 'nlu-json')[0].id
         return Promise.all([TrainingData.findByPk(storiesId), TrainingData.findByPk(nluId)])
