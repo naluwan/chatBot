@@ -54,13 +54,24 @@ function createTemplate(role, stepIndex) {
             </div>
           </div>
           <div class='card-body'> 
-            <input class='form-control'
-              type='text' 
-              name=${isUser ? `userStep_${stepIndex}` : `${actionText}_${stepIndex}`}
-              id=${isUser ? `userStep_${stepIndex}` : `${actionText}_${stepIndex}`}
-              placeholder='${isUser ? '請輸入使用者對話' : '請輸入機器人回覆'}'
-              required
-            />
+          ${
+            isUser
+              ? `<input class='form-control'
+                type='text' 
+                name=${`userStep_${stepIndex}`}
+                id=${`userStep_${stepIndex}`}
+                placeholder='請輸入使用者對話'
+                required
+                />`
+              : `<textarea class='form-control'
+                  type='text' 
+                  name=${`${actionText}_${stepIndex}`}
+                  id=${`${actionText}_${stepIndex}`}
+                  placeholder='請輸入機器人回覆'
+                  rows='5'
+                  required
+                  ></textarea>`
+          }
           </div>
         </div> 
       </div> 

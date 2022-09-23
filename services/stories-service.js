@@ -54,6 +54,11 @@ const storiesServices = {
       return { intent: Object.values(item)[0], user: Object.values(item)[0], entities: [] }
     })
 
+    // 將機器人回覆改成rasa機器人回覆可以接受的格式
+    for (const key in botRes) {
+      botRes[key] = JSON.parse(JSON.stringify(botRes[key]).replace(/\\r\\n/g, '  \\n'))
+    }
+
     return TrainingData.findAll({ where: { userId } })
       .then(data => {
         const storiesId = data.filter(item => item.name === 'fragments')[0].id
