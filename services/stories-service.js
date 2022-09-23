@@ -27,6 +27,7 @@ const storiesServices = {
     const storySteps = []
     const botRes = []
     const nluItems = []
+    const newExamples = []
 
     // 將req.body裡的東西做分類
     for (const key in req.body) {
@@ -42,6 +43,15 @@ const storiesServices = {
         // 獲取使用者對話的例句和意圖(目前只有例句)
         nluItems.push(req.body[key])
       }
+      if (key.includes('addExamples')) {
+        const examples = req.body[key]
+          .split(',')
+          .map(example => example.trimStart())
+          .map(example => example.trimEnd())
+          .filter(example => example !== '')
+        const index = key.slice(-1)
+        newExamples.push({ index, examples })
+      }
     }
 
     if (!storySteps.length || !botRes.length) throw new Error('使用者對話和機器人回覆都是必填的')
@@ -52,6 +62,11 @@ const storiesServices = {
         return { action: Object.keys(item)[0].slice(0, 15) }
       }
       return { intent: Object.values(item)[0], user: Object.values(item)[0], entities: [] }
+    })
+
+    // 將添加例句組成正確格式
+    const currentExamples = newExamples.map(example => {
+      return { intent: steps[Number(example.index)].intent, examples: example.examples }
     })
 
     // 將機器人回覆改成rasa機器人回覆可以接受的格式
@@ -97,7 +112,7 @@ const storiesServices = {
             domain.intents = []
           }
 
-          // 驗證例句是否重複
+          // 驗證使用者對話是否重複
           nlu.rasa_nlu_data.common_examples.map(item => {
             return nluItems.forEach(nluItem => {
               if (nluItem === item.text) {
@@ -106,7 +121,20 @@ const storiesServices = {
             })
           })
 
-          if (repeat.length) throw new Error('例句重複')
+          if (repeat.length) throw new Error('使用者對話重複，請重新嘗試')
+
+          // 驗證例句是否重複
+          nlu.rasa_nlu_data.common_examples.map(item => {
+            return currentExamples.map(curExam => {
+              return curExam.examples.forEach(example => {
+                if (example === item.text) {
+                  repeat.push(example)
+                }
+              })
+            })
+          })
+
+          if (repeat.length) throw new Error('例句重複，請重新嘗試')
 
           // 將故事寫入fragments訓練檔
           stories.push({ story: storyName, steps })
@@ -120,6 +148,17 @@ const storiesServices = {
             })
             domain.intents.push(nluItem)
             return nluItem
+          })
+
+          // 將使用者添加的例句加入nlu訓練檔
+          currentExamples.map(item => {
+            return item.examples.forEach(example => {
+              nlu.rasa_nlu_data.common_examples.push({
+                text: example,
+                intent: item.intent,
+                entities: []
+              })
+            })
           })
 
           // 將機器人回覆寫入domain訓練檔

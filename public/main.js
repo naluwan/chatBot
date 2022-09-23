@@ -47,7 +47,11 @@ function createTemplate(role, stepIndex) {
             <div>
               ${
                 isUser
-                  ? '<button type="button" class="btn btn-secondary" id="addExams">增加例句</button>'
+                  ? ` 
+                      <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target=${`#addExamples-${stepIndex}`}>
+                        增加例句
+                      </button>
+                    `
                   : ''
               }
               <button type="button" class="btn btn-danger" id="deleteBtn">刪除</button>
@@ -56,19 +60,41 @@ function createTemplate(role, stepIndex) {
           <div class='card-body'> 
           ${
             isUser
-              ? `<input class='form-control'
-                type='text' 
-                name=${`userStep_${stepIndex}`}
-                id=${`userStep_${stepIndex}`}
-                placeholder='請輸入使用者對話'
-                required
-                />`
+              ? `
+                  <input class='form-control'
+                    type='text' 
+                    name=${`userStep_${stepIndex}`}
+                    id=${`userStep_${stepIndex}`}
+                    placeholder='請輸入使用者對話'
+                    style="font-size: 1.25rem;"
+                    required
+                  />
+                  <div class="modal fade" id=${`addExamples-${stepIndex}`} data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h5 class="modal-title" id="addExamplesLabel">新增例句</h5>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                          <textarea class="col-12" name=${`addExamples-${stepIndex}`} id=${`addExamples-${stepIndex}`} rows="5" style="font-size: 1.25rem;"
+                          placeholder="請填入例句，多例句請用『,』符號分開"></textarea>
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                          <button type="button" class="btn btn-primary" data-bs-dismiss="modal">儲存</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                `
               : `<textarea class='form-control'
                   type='text' 
                   name=${`${actionText}_${stepIndex}`}
                   id=${`${actionText}_${stepIndex}`}
                   placeholder='請輸入機器人回覆'
                   rows='5'
+                  style="font-size: 1.25rem;"
                   required
                   ></textarea>`
           }
