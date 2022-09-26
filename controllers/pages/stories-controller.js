@@ -26,8 +26,10 @@ const storiesController = {
     storiesServices.putResponse(req, (err, data) => {
       if (err) return next(err)
 
-      req.flash('success_messages', '更新機器人回覆成功')
-      req.session.updateStory = data
+      if (data) {
+        req.flash('success_messages', '更新機器人回覆成功')
+        req.session.updateStory = data
+      }
       return res.redirect(`/stories/${storyName}`)
     })
   },
@@ -36,8 +38,10 @@ const storiesController = {
     storiesServices.putUserSay(req, (err, data) => {
       if (err) return next(err)
 
-      req.flash('success_messages', '更新使用者對話成功')
-      req.session.updateStory = data
+      if (data) {
+        req.flash('success_messages', '更新使用者對話成功')
+        req.session.updateStory = data
+      }
       return res.redirect(`/stories/${storyName}`)
     })
   },
@@ -48,6 +52,7 @@ const storiesController = {
     const { storyName } = req.params
     storiesServices.deleteStory(req, (err, data) => {
       if (err) return next(err)
+      req.session.deleteData = data
       req.flash('success_messages', `成功刪除『${storyName}』`)
       return res.redirect('/stories')
     })

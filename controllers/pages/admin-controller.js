@@ -83,8 +83,10 @@ const adminControllers = {
     storiesServices.putResponse(req, (err, data) => {
       if (err) return next(err)
 
-      req.flash('success_messages', '更新機器人回覆成功')
-      req.session.updateStory = data
+      if (data) {
+        req.flash('success_messages', '更新機器人回覆成功')
+        req.session.updateStory = data
+      }
       return res.redirect(`/admin/stories?userId=${userId}&storyName=${storyName}`)
     })
   },
@@ -93,8 +95,10 @@ const adminControllers = {
     storiesServices.putUserSay(req, (err, data) => {
       if (err) return next(err)
 
-      req.flash('success_messages', '更新使用者對話成功')
-      req.session.updateStory = data
+      if (data) {
+        req.flash('success_messages', '更新使用者對話成功')
+        req.session.updateStory = data
+      }
       return res.redirect(`/admin/stories?userId=${userId}&storyName=${storyName}`)
     })
   },
@@ -119,6 +123,7 @@ const adminControllers = {
     storiesServices.deleteStory(req, (err, data) => {
       if (err) return next(err)
       req.flash('success_messages', `成功刪除『${storyName}』`)
+      req.session.deleteData = data
       return res.redirect(`/admin/stories?userId=${userId}`)
     })
   }
