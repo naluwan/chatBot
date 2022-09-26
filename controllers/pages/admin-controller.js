@@ -18,15 +18,28 @@ const adminControllers = {
         const responses = JSON.parse(
           data.filter(item => item.name === 'domain')[0].content
         ).responses
+        const nlu = JSON.parse(data.filter(item => item.name === 'nlu-json')[0].content).rasa_nlu_data.common_examples
 
         stories.map(item => {
           return item.steps.map(step => {
             // 將資料庫中rasa的機器人回覆格式(  \n)轉成網頁能分段的格式(\r)
-            return step.action
-              ? (step.response = JSON.parse(
-                  JSON.stringify(responses[step.action][0].text).replace(/ \\n/g, '\\r')
-                ))
-              : step
+            // 抓取機器人回覆
+            if (step.action) {
+              step.response = JSON.parse(
+                JSON.stringify(responses[step.action][0].text).replace(/ \\n/g, '\\r')
+              )
+            }
+            // 抓取使用者例句
+            if (step.intent) {
+              const examples = nlu.filter(nluItem => nluItem.intent === step.intent)
+              const currentExample = examples.map((example, index) => {
+                let exampleStr = ''
+                exampleStr = exampleStr + example.text
+                return exampleStr
+              })
+              step.examples = currentExample
+            }
+            return step
           })
         })
 
