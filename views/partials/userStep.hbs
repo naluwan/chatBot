@@ -50,8 +50,8 @@
   aria-labelledby='addExamples-{{@index}}-label' aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
-      <form action={{#ifCond role 'admin' }}'/admin/nlu/examples/{{userId}}/{{storyName}}/{{this.intent}}?_method=PUT'
-        {{else}}'/nlu/examples/{{storyName}}/{{this.intent}}?_method=PUT' {{/ifCond}} method='post'>
+      <form action={{#ifCond role 'admin' }}'/admin/nlu/examples/{{userId}}/{{storyName}}?_method=PUT'
+        {{else}}'/nlu/examples/{{storyName}}?_method=PUT' {{/ifCond}} method='post'>
         <div class="modal-header">
           <h5 class="modal-title" id="addExamples-{{@index}}-label">新增例句</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -59,6 +59,7 @@
         <div class="modal-body">
           <textarea class="col-12" name="addExamples" rows="5" style="font-size: 1.25rem;"
             placeholder="請填入例句，多例句請用『,』符號分開">{{this.examples}}</textarea>
+            <input type="hidden" value="{{this.intent}}" name="intent" style="display: none;">
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>

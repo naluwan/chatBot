@@ -27,7 +27,7 @@ router.put(
   storiesController.putResponse
 )
 
-router.put('/nlu/examples/:storyName/:intent', authenticated, storiesController.putExamples)
+router.put('/nlu/examples/:storyName', authenticated, storiesController.putExamples)
 router.get('/stories/create', authenticated, storiesController.createStoryPage)
 router.put('/stories/userSay/:userId/:storyName', authenticated, storiesController.putUserSay)
 router.get('/stories/actions', authenticated, storiesController.getAllActions)

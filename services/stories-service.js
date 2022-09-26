@@ -41,7 +41,11 @@ const storiesServices = {
       }
       if (key.includes('Step')) {
         // 獲取使用者對話的例句和意圖(目前只有例句)
-        nluItems.push(req.body[key])
+        nluItems.push({
+          text: req.body[key],
+          intent: req.body[key],
+          entities: []
+        })
       }
       if (key.includes('addExamples')) {
         const examples = req.body[key]
@@ -61,7 +65,11 @@ const storiesServices = {
       if (Object.keys(item)[0].includes('utter')) {
         return { action: Object.keys(item)[0].slice(0, 15) }
       }
-      return { intent: Object.values(item)[0], user: Object.values(item)[0], entities: [] }
+      return {
+        intent: Object.values(item)[0],
+        user: Object.values(item)[0],
+        entities: []
+      }
     })
 
     // 將添加例句組成正確格式
@@ -141,12 +149,8 @@ const storiesServices = {
 
           // 將使用者例句寫入nlu和domain訓練檔
           nluItems.map(nluItem => {
-            nlu.rasa_nlu_data.common_examples.push({
-              text: nluItem,
-              intent: nluItem,
-              entities: []
-            })
-            domain.intents.push(nluItem)
+            nlu.rasa_nlu_data.common_examples.push(nluItem)
+            domain.intents.push(nluItem.intent)
             return nluItem
           })
 
@@ -364,9 +368,13 @@ const storiesServices = {
   },
   putExamples: (req, cb) => {
     const userId = req.params.userId ? req.params.userId : req.user.id
-    const { intent, storyName } = req.params
-    const { addExamples } = req.body
-    const examples = addExamples.split(',').map(example => example.trimStart()).map(example => example.trimEnd()).filter(example => example !== '')
+    const { storyName } = req.params
+    const { intent, addExamples } = req.body
+    const examples = addExamples
+      .split(',')
+      .map(example => example.trimStart())
+      .map(example => example.trimEnd())
+      .filter(example => example !== '')
 
     return TrainingData.findAll({ where: { userId } })
       .then(data => {
@@ -376,7 +384,9 @@ const storiesServices = {
       .then(nluData => {
         const repeat = []
         const nlu = JSON.parse(nluData.content)
-        nlu.rasa_nlu_data.common_examples = nlu.rasa_nlu_data.common_examples.filter(nluItem => nluItem.intent !== intent || nluItem.text === intent)
+        nlu.rasa_nlu_data.common_examples = nlu.rasa_nlu_data.common_examples.filter(
+          nluItem => nluItem.intent !== intent || nluItem.text === intent
+        )
         examples.map(example => {
           return nlu.rasa_nlu_data.common_examples.map(nluItem => {
             if (example === nluItem.text) {
