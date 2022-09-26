@@ -10,16 +10,16 @@
       type='button'
       class='btn btn-primary'
       data-bs-toggle='modal'
-      data-bs-target='#editBotResModal'
+      data-bs-target='#editBotResModal-{{@index}}'
     >編輯</button>
   </div>
 </div>
 
 <div
   class='modal fade'
-  id='editBotResModal'
+  id='editBotResModal-{{@index}}'
   tabindex='-1'
-  aria-labelledby='editBotResModalLabel'
+  aria-labelledby='editBotResModal-{{@index}}-label'
   aria-hidden='true'
 >
   <div class='modal-dialog modal-dialog-centered'>
@@ -31,7 +31,7 @@
         method='post'
       >
         <div class='modal-header'>
-          <h5 class='modal-title' id='editBotResModalLabel'>編輯機器人回覆</h5>
+          <h5 class='modal-title' id='editBotResModal-{{@index}}-label'>編輯機器人回覆</h5>
           <button
             type='button'
             class='btn-close'

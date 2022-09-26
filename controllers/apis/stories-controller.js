@@ -27,11 +27,14 @@ const storiesController = {
     )
   },
   deleteStory: (req, res, next) => {
-    storiesServices.deleteStory(req, (err, data) => {
-      if (err) return next(err)
-      console.log(data)
-      res.json({ status: 'success', data })
-    })
+    storiesServices.deleteStory(req, (err, data) =>
+      err ? next(err) : res.json({ status: 'success', data })
+    )
+  },
+  putExamples: (req, res, next) => {
+    storiesServices.putExamples(req, (err, data) =>
+      err ? next(err) : res.json({ status: 'success', data })
+    )
   }
 }
 

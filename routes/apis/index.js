@@ -11,6 +11,7 @@ router.put(
   authenticated,
   storiesController.putResponse
 )
+router.put('/nlu/examples/:storyName/:intent', authenticated, storiesController.putExamples)
 router.put('/stories/userSay/:userId/:storyName', authenticated, storiesController.putUserSay)
 router.delete('/stories/:storyName', authenticated, storiesController.deleteStory)
 router.get('/stories/:storyName', authenticated, storiesController.getStory)

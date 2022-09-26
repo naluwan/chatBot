@@ -31,7 +31,7 @@ const adminControllers = {
             }
             // 抓取使用者例句
             if (step.intent) {
-              const examples = nlu.filter(nluItem => nluItem.intent === step.intent)
+              const examples = nlu.filter(nluItem => nluItem.intent === step.intent && nluItem.text !== step.intent)
               const currentExample = examples.map((example, index) => {
                 let exampleStr = ''
                 exampleStr = exampleStr + example.text
@@ -125,6 +125,14 @@ const adminControllers = {
       req.flash('success_messages', `成功刪除『${storyName}』`)
       req.session.deleteData = data
       return res.redirect(`/admin/stories?userId=${userId}`)
+    })
+  },
+  putExamples: (req, res, next) => {
+    const { userId, storyName } = req.params
+    storiesServices.putExamples(req, (err, data) => {
+      if (err) return next(err)
+      req.flash('success_messages', '新增例句成功')
+      return res.redirect(`/admin/stories?userId=${userId}&storyName=${storyName}`)
     })
   }
 }

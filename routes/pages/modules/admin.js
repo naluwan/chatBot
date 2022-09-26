@@ -2,6 +2,7 @@ const express = require('express')
 const router = express.Router()
 const adminController = require('../../../controllers/pages/admin-controller')
 
+router.put('/nlu/examples/:userId/:storyName/:intent', adminController.putExamples)
 router.get('/stories/create', adminController.createStoryPage)
 router.put('/stories/response/:userId/:storyName/:action', adminController.putResponse)
 router.put('/stories/userSay/:userId/:storyName', adminController.putUserSay)

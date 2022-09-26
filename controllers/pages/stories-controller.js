@@ -57,6 +57,14 @@ const storiesController = {
       return res.redirect('/stories')
     })
   },
+  putExamples: (req, res, next) => {
+    const { storyName } = req.params
+    storiesServices.putExamples(req, (err, data) => {
+      if (err) return next(err)
+      req.flash('success_messages', '新增例句成功')
+      return res.redirect(`/stories/${storyName}`)
+    })
+  },
   getAllActions: (req, res, next) => {
     const { id } = req.user
     return TrainingData.findAll({ where: { userId: id }, raw: true })

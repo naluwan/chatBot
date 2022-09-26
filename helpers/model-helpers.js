@@ -17,7 +17,7 @@ const getStoryInfo = (userId, storyName, cb) => {
         }
         // 抓取使用者例句
         if (step.intent) {
-          const examples = nlu.filter(nluItem => nluItem.intent === step.intent)
+          const examples = nlu.filter(nluItem => nluItem.intent === step.intent && nluItem.text !== step.intent)
           const currentExample = examples.map((example, index) => {
             let exampleStr = ''
             exampleStr = exampleStr + example.text
