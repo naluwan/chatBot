@@ -1,4 +1,4 @@
-const storiesServices = require('../../services/stories-service')
+const storiesServices = require('../../services/stories-services')
 
 const storiesController = {
   getStories: (req, res, next) => {

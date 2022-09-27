@@ -3,8 +3,11 @@ const router = express.Router()
 const passport = require('../../config/passport')
 const storiesController = require('../../controllers/apis/stories-controller')
 const userController = require('../../controllers/apis/user-controller')
-const { authenticated } = require('../../middleware/api-auth')
+const { authenticated, authenticateAdmin } = require('../../middleware/api-auth')
 const { apiErrorHandler } = require('../../middleware/error-handler')
+const admin = require('./modules/admin')
+
+router.use('/admin', authenticated, authenticateAdmin, admin)
 
 router.put(
   '/stories/response/:userId/:storyName/:action',

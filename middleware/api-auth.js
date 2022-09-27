@@ -13,7 +13,7 @@ const authenticated = (req, res, next) => {
 const authenticateAdmin = (req, res, next) => {
   if (req.user && req.user.isAdmin) return next()
 
-  return res.status(403).json({ status: 'error', message: 'permission denied' })
+  return res.status(403).json({ status: 'error', message: '權限不足' })
 }
 
 module.exports = {
