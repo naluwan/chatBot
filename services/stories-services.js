@@ -182,8 +182,8 @@ const storiesServices = {
         })
       })
       .then(() => {
-        return getStoryInfo(userId, storyName, cb).then(updateStory => {
-          cb(null, { story: updateStory })
+        return getStoryInfo(userId, storyName, cb).then(story => {
+          cb(null, { story })
         })
       })
       .catch(err => cb(err))

@@ -1,4 +1,4 @@
-const { adminServices } = require('../../services')
+const { adminServices, storiesServices } = require('../../services')
 
 const adminController = {
   getStories: (req, res, next) => {
@@ -13,6 +13,11 @@ const adminController = {
   },
   patchUser: (req, res, next) => {
     adminServices.patchUser(req, (err, data) =>
+      err ? next(err) : res.json({ status: 'success', data })
+    )
+  },
+  postStory: (req, res, next) => {
+    storiesServices.postStory(req, (err, data) =>
       err ? next(err) : res.json({ status: 'success', data })
     )
   }
