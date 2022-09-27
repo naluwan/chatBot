@@ -189,8 +189,9 @@ const storiesServices = {
       .catch(err => cb(err))
   },
   putResponse: (req, cb) => {
+    const userId = req.params.userId ? req.params.userId : req.user.id
     const { botRes, oriBotRes } = req.body
-    const { userId, storyName, action } = req.params
+    const { storyName, action } = req.params
     if (botRes === oriBotRes) {
       return cb(null)
     }

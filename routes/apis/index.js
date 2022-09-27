@@ -9,11 +9,7 @@ const admin = require('./modules/admin')
 
 router.use('/admin', authenticated, authenticateAdmin, admin)
 
-router.put(
-  '/stories/response/:userId/:storyName/:action',
-  authenticated,
-  storiesController.putResponse
-)
+router.put('/stories/response/:storyName/:action', authenticated, storiesController.putResponse)
 router.put('/nlu/examples/:storyName', authenticated, storiesController.putExamples)
 router.put('/stories/userSay/:userId/:storyName', authenticated, storiesController.putUserSay)
 router.delete('/stories/:storyName', authenticated, storiesController.deleteStory)

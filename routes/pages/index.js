@@ -21,12 +21,8 @@ router.post(
 router.get('/signup', userController.signUpPage)
 router.post('/signup', userController.signUp)
 router.get('/logout', userController.logout)
-router.put(
-  '/stories/response/:userId/:storyName/:action',
-  authenticated,
-  storiesController.putResponse
-)
 
+router.put('/stories/response/:storyName/:action', authenticated, storiesController.putResponse)
 router.put('/nlu/examples/:storyName', authenticated, storiesController.putExamples)
 router.get('/stories/create', authenticated, storiesController.createStoryPage)
 router.put('/stories/userSay/:userId/:storyName', authenticated, storiesController.putUserSay)
