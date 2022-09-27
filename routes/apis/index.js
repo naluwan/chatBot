@@ -18,6 +18,7 @@ router.get('/stories/:storyName', authenticated, storiesController.getStory)
 router.post('/stories', authenticated, storiesController.postStory)
 router.get('/stories', authenticated, storiesController.getStories)
 router.post('/signup', userController.signUp)
+router.get('/auth', authenticated, userController.auth)
 router.post(
   '/signin',
   // 加上failWithError: true和userController.signFail來做錯誤處理

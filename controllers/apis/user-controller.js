@@ -9,10 +9,8 @@ const userController = {
       const token = jwt.sign(userData, process.env.JWT_SECRET, { expiresIn: '30d' })
       res.json({
         status: 'success',
-        data: {
-          token,
-          user: userData
-        }
+        token,
+        user: userData
       })
     } catch (err) {
       next(err)
@@ -25,6 +23,10 @@ const userController = {
     userServices.signUp(req, (err, data) =>
       err ? next(err) : res.json({ status: 'success', data })
     )
+  },
+  auth: (req, res, next) => {
+    const user = req.user
+    res.json({ user })
   }
 }
 
