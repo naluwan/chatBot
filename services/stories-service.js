@@ -301,7 +301,7 @@ const storiesServices = {
           TrainingData.findByPk(domainId)
         ]).then(([storiesData, nluData, domainData]) => {
           const stories = JSON.parse(storiesData.content).stories
-          const nlu = JSON.parse(nluData.content).rasa_nlu_data.common_examples
+          const nlu = JSON.parse(nluData.content)
           const domain = JSON.parse(domainData.content)
           const hasStory = []
           const intentsArr = []
@@ -331,34 +331,40 @@ const storiesServices = {
           const updateStories = stories.filter(item => item.story !== storyName)
           deleteStory = stories.filter(item => item.story === storyName)
 
-          let updateNlu = nlu
-          let updateIntents
-          if (intentsArr.length) {
-            updateNlu = intentsArr.map(intent => {
-              return nlu.filter(nluItem => nluItem.intent !== intent)[0]
-            })
-            updateIntents = intentsArr.map(intent => {
-              return domain.intents.filter(domainIntent => domainIntent !== intent)[0]
-            })
-          }
-          domain.intents = updateIntents
+          intentsArr.map(intent => {
+            // 刪除nlu相同意圖例句
+            const allNlu = nlu.rasa_nlu_data.common_examples
+            for (let i = 0; i < allNlu.length; i += 1) {
+              if (allNlu[i].intent === intent) {
+                allNlu.splice(i, 1)
+                i--
+              }
+            }
 
-          let updateActions
-          if (actionsArr.length) {
-            updateActions = actionsArr.map(action => {
-              return domain.actions.filter(actionItem => actionItem !== action)[0]
+            // 刪除domain intents
+            const domainIntents = domain.intents
+            for (let i = 0; i < domainIntents.length; i += 1) {
+              if (domainIntents[i] === intent) {
+                domainIntents.splice(i, 1)
+              }
+            }
+            return intent
+          })
+
+          // 刪除domain action
+          actionsArr.map(action => {
+            domain.actions.map((domainAction, idx) => {
+              if (domainAction === action) {
+                domain.actions.splice(idx, 1)
+              }
+              return domainAction
             })
-            actionsArr.map(action => {
-              return delete domain.responses[action]
-            })
-            domain.actions = updateActions
-          }
+            return delete domain.responses[action]
+          })
 
           return Promise.all([
             storiesData.update({ content: JSON.stringify({ stories: updateStories }) }),
-            nluData.update({
-              content: JSON.stringify({ rasa_nlu_data: { common_examples: updateNlu } })
-            }),
+            nluData.update({ content: JSON.stringify(nlu) }),
             domainData.update({ content: JSON.stringify(domain) })
           ])
         })
