@@ -69,6 +69,21 @@ const adminServices = {
         cb(null, { users })
       })
       .catch(err => cb(err))
+  },
+  patchUser: (req, cb) => {
+    const { id } = req.params
+    return User.findByPk(id)
+      .then(user => {
+        if (!user) throw new Error('查無使用者資料，請重新嘗試')
+        if (user.cpnyName === 'admin') throw new Error('禁止變更『admin管理員』權限')
+        return user.update({ isAdmin: !user.isAdmin })
+      })
+      .then(user => {
+        user = user.toJSON()
+        delete user.password
+        cb(null, { user })
+      })
+      .catch(err => cb(err))
   }
 }
 

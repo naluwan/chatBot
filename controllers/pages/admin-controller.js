@@ -10,19 +10,15 @@ const adminControllers = {
     adminServices.getUsers(req, (err, data) => (err ? next(err) : res.render('admin/users', data)))
   },
   patchUser: (req, res, next) => {
-    const { id } = req.params
-    return User.findByPk(id)
-      .then(user => {
-        if (user.cpnyName === 'admin') {
-          req.flash('error_messages', '禁止變更『admin管理員』權限')
-          return res.redirect('back')
-        }
-        user.update({ isAdmin: !user.isAdmin }).then(() => {
-          req.flash('success_messages', '使用者權限變更成功')
-          res.redirect('/admin/users')
-        })
-      })
-      .catch(err => next(err))
+    adminServices.patchUser(req, (err, data) => {
+      if (err) return next(err)
+      if (data.user.isAdmin) {
+        req.flash('success_messages', `成功將使用者『${data.user.cpnyName}』權限改為管理者`)
+      } else {
+        req.flash('success_messages', `成功將使用者『${data.user.cpnyName}』權限改為一般使用者`)
+      }
+      res.redirect('/admin/users')
+    })
   },
   putResponse: (req, res, next) => {
     const { userId, storyName } = req.params
