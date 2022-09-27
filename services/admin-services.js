@@ -61,6 +61,14 @@ const adminServices = {
         cb(null, { users, userId: Number(req.query.userId), stories })
       })
       .catch(err => cb(err))
+  },
+  getUsers: (req, cb) => {
+    return User.findAll({ raw: true })
+      .then(users => {
+        users.map(user => delete user.password)
+        cb(null, { users })
+      })
+      .catch(err => cb(err))
   }
 }
 

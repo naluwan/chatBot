@@ -5,6 +5,11 @@ const adminController = {
     adminServices.getStories(req, (err, data) =>
       err ? next(err) : res.json({ status: 'success', data })
     )
+  },
+  getUsers: (req, res, next) => {
+    adminServices.getUsers(req, (err, data) =>
+      err ? next(err) : res.json({ status: 'success', data })
+    )
   }
 }
 
