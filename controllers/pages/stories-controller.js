@@ -18,7 +18,7 @@ const storiesController = {
       if (err) return next(err)
 
       req.flash('success_messages', `新增故事『${storyName}』成功`)
-      return res.redirect(`/stories?storyName=${storyName}`)
+      return res.redirect(`/stories/${storyName}`)
     })
   },
   putResponse: (req, res, next) => {
