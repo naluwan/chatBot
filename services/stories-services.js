@@ -241,6 +241,11 @@ const storiesServices = {
         ).stories
         const hasStory = stories.filter(item => item.story === storyName)
         if (!hasStory.length) throw new Error('查無此故事資料，請重新嘗試')
+        const hasStep = hasStory[0].steps.filter(
+          step => step.user === oriUserSay || step.intent === oriUserSay
+        )
+        console.log(hasStep)
+        if (!hasStep.length) throw new Error('查無此使用者對話，請重新嘗試')
 
         const storiesId = data.filter(item => item.name === 'fragments')[0].id
         const nluId = data.filter(item => item.name === 'nlu-json')[0].id
@@ -249,6 +254,8 @@ const storiesServices = {
       .then(([storiesData, nluData]) => {
         const stories = JSON.parse(storiesData.content).stories
         const nlu = JSON.parse(nluData.content)
+        const repeat = nlu.rasa_nlu_data.common_examples.filter(nluItem => nluItem.text === userSay)
+        if (repeat.length) throw new Error('使用者例句重複，請重新嘗試')
         stories.map(item => {
           if (item.story === storyName) {
             item.steps.map(step => {
