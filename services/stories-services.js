@@ -123,7 +123,7 @@ const storiesServices = {
           // 驗證使用者對話是否重複
           nlu.rasa_nlu_data.common_examples.map(item => {
             return nluItems.forEach(nluItem => {
-              if (nluItem === item.text) {
+              if (nluItem.text === item.text) {
                 repeat.push(item)
               }
             })
@@ -310,6 +310,7 @@ const storiesServices = {
           const stories = JSON.parse(storiesData.content).stories
           const nlu = JSON.parse(nluData.content)
           const domain = JSON.parse(domainData.content)
+          const responses = domain.responses
           const hasStory = []
           const intentsArr = []
           const actionsArr = []
@@ -336,7 +337,15 @@ const storiesServices = {
           })
 
           const updateStories = stories.filter(item => item.story !== storyName)
-          deleteStory = stories.filter(item => item.story === storyName)
+          deleteStory = stories.filter(item => item.story === storyName)[0]
+          deleteStory.steps.map(step => {
+            if (step.action) {
+              step.response = JSON.parse(
+                JSON.stringify(responses[step.action][0].text).replace(/ \\n/g, '\\r')
+              )
+            }
+            return step
+          })
 
           intentsArr.map(intent => {
             // 刪除nlu相同意圖例句

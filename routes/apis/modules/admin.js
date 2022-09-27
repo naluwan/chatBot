@@ -4,6 +4,7 @@ const adminController = require('../../../controllers/apis/admin-controller')
 
 router.put('/stories/userSay/:userId/:storyName', adminController.putUserSay)
 router.put('/stories/response/:userId/:storyName/:action', adminController.putResponse)
+router.delete('/stories/:userId/:storyName', adminController.deleteStory)
 router.post('/stories', adminController.postStory)
 router.patch('/users/:id', adminController.patchUser)
 router.get('/users', adminController.getUsers)
