@@ -20,6 +20,11 @@ const adminController = {
     storiesServices.postStory(req, (err, data) =>
       err ? next(err) : res.json({ status: 'success', data })
     )
+  },
+  putResponse: (req, res, next) => {
+    storiesServices.putResponse(req, (err, data) =>
+      err ? next(err) : res.json({ status: 'success', data })
+    )
   }
 }
 
