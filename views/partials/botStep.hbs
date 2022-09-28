@@ -26,7 +26,7 @@
     <div class='modal-content'>
       <form
         action={{#ifCond role 'admin'}}'/admin/stories/response/{{userId}}/{{storyName}}/{{this.action}}?_method=PUT'
-        {{else}}'/stories/response/{{userId}}/{{storyName}}/{{this.action}}?_method=PUT'
+        {{else}}'/stories/response/{{storyName}}/{{this.action}}?_method=PUT'
         {{/ifCond}}
         method='post'
       >

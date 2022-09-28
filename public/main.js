@@ -167,8 +167,153 @@ function clickBotStepBtn() {
   })
 }
 
+// loading
+function loading() {
+  const InpBox = document.createElement('div')
+  InpBox.setAttribute('id', 'loading')
+
+  const loading = document.createElement('img')
+  loading.src = '/images/loading.svg'
+
+  InpBox.appendChild(loading)
+
+  document.body.appendChild(InpBox)
+}
+
+// loading close
+function loadingClose() {
+  document.querySelector('#loading') && document.querySelector('#loading').remove()
+}
+
+// showBox
+function showBox(INFO, ID, CLOSE, FUN) {
+  /*
+    INFO =放入彈出視窗的 html
+    ID = 彈出視窗的名字
+    CLOSE = 不需要關閉按鈕才需指定參數為 "N"
+    FUN = 當有關閉按鈕,關閉視窗後執行程式
+    */
+
+  const InpBox = document.createElement('div')
+  InpBox.setAttribute('class', 'showBox')
+
+  if (ID !== undefined) {
+    InpBox.setAttribute('id', ID)
+  }
+
+  document.body.style.overflow = 'hidden'
+  document.body.appendChild(InpBox)
+
+  const InpBoxDiv1 = document.createElement('div')
+  const InpBoxDiv2 = document.createElement('div')
+  InpBoxDiv2.setAttribute('class', 'content')
+  InpBoxDiv2.style.overflow = 'auto'
+  InpBoxDiv2.innerHTML = INFO
+
+  InpBoxDiv1.appendChild(InpBoxDiv2)
+  InpBox.appendChild(InpBoxDiv1)
+
+  window.addEventListener('resize', RESIZE)
+
+  function RESIZE() {
+    const WH = document.documentElement.clientHeight
+    const MH2 = InpBoxDiv2
+    if (localStorage.getItem('ZOOM') == null) {
+      MH2.style.maxHeight = Math.floor(WH * 0.9 - 40) + 'px'
+    } else {
+      MH2.style.maxHeight = Math.floor(WH * 0.9 - 40) / localStorage.getItem('ZOOM') + 'px'
+    }
+  }
+
+  RESIZE()
+
+  /* 區塊外點擊關閉視窗 */
+  if (CLOSE === undefined || CLOSE !== 'N') {
+    showboxClose(InpBox, FUN)
+  } else {
+    InpBox.classList.add('noClose')
+  }
+}
+
+// showBox close
+function showboxClose(inputBox, fun) {
+  const boxBack = document.createElement('span')
+  boxBack.setAttribute('style', 'width:100%;height:100%;display:block;position:fixed;top:0;left:0;')
+  inputBox.appendChild(boxBack)
+
+  // 加入關閉視窗按鈕
+  const CLOSE = document.createElement('span')
+  CLOSE.setAttribute('class', 'close')
+  inputBox.querySelector('div').appendChild(CLOSE)
+
+  // X 關閉視窗
+  CLOSE.onclick = function () {
+    boxClose()
+  }
+
+  // 內容外 關閉視窗
+  boxBack.onclick = function () {
+    boxClose()
+  }
+
+  // 視窗彈出鍵盤 ESC 關閉視窗
+  if (window.event) {
+    document.documentElement.onkeydown = function (event) {
+      if (window.event.keyCode === 27) {
+        boxClose()
+      }
+    }
+  } else {
+    document.documentElement.onkeydown = function (event) {
+      if (event.key === 'Escape') {
+        boxClose()
+      }
+    }
+  }
+
+  function boxClose() {
+    inputBox.outerHTML = ''
+    if (!document.querySelector('.showBox')) {
+      document.body.style.overflow = ''
+    }
+    document.documentElement.onkeydown = ''
+
+    if (fun) {
+      fun()
+    }
+  }
+}
+
+// 確認機器人伺服器訓練狀況，每五秒發送一次確認
+function checkRasaStatus() {
+  const train = document.querySelector('#train-button')
+  if (train) {
+    function cb(data) {
+      console.log(data)
+      if (data !== 0) {
+        if (train.getAttribute('disabled') !== '') {
+          train.innerHTML = '<i class="fa-solid fa-spinner fa-spin fa-fw"></i>  機器人訓練中'
+          train.setAttribute('disabled', '')
+        }
+      } else {
+        train.innerText = '執行訓練'
+        train.removeAttribute('disabled')
+      }
+
+      setTimeout(() => {
+        checkRasaStatus()
+      }, 5000)
+    }
+    fetch('http://192.168.10.105:5005/status')
+      .then(res => res.json())
+      .then(data => data.num_active_training_jobs)
+      .then(trainCount => cb(trainCount))
+  }
+}
+
 // 網頁載入時執行
 window.onload = () => {
+  checkRasaStatus()
   if (document.querySelector('#createStoryForm')) {
     const isLastUser = document
       .querySelector('#createStoryForm')
@@ -182,6 +327,7 @@ window.onload = () => {
     clickUserStepBtn()
     clickBotStepBtn()
   }
+
   if (document.querySelector('#deleteStoryBtn')) {
     const deleteBtns = document.querySelectorAll('#deleteStoryBtn')
     deleteBtns.forEach(deleteBtn => {
@@ -195,4 +341,61 @@ window.onload = () => {
       })
     })
   }
+
+  if (document.querySelector('#train-button')) {
+    const trainBtn = document.querySelector('#train-button')
+    trainBtn.addEventListener('click', e => {
+      fetch('http://192.168.10.105:5005/status')
+        .then(res => res.json())
+        .then(data => data.num_active_training_jobs)
+        .then(trainCount => {
+          if (trainCount !== 0) {
+            checkRasaStatus()
+          } else {
+            loading()
+            trainBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin fa-fw"></i>  機器人訓練中'
+            trainBtn.setAttribute('disabled', '')
+            fetch('http://localhost:3333/train/trainData')
+              .then(res => res.json())
+              .then(data => {
+                return fetch(
+                  'http://192.168.10.105:5005/model/train?save_to_default_model_directory=true&force_training=true',
+                  {
+                    method: 'post',
+                    body: JSON.stringify(data),
+                    headers: {
+                      'content-Type': 'application/json'
+                    }
+                  }
+                )
+              })
+              .then(res => res.headers.get('filename'))
+              .then(fileName => {
+                const payload = {
+                  model_file: `/home/bill/Work/BF36_RASA_2.8.31_spacy/models/${fileName}`
+                }
+                return fetch('http://192.168.10.105:5005/model', {
+                  method: 'put',
+                  body: JSON.stringify(payload),
+                  headers: {
+                    'content-Type': 'application/json'
+                  }
+                })
+              })
+              .then(res => {
+                if (res.status === 204) {
+                  loadingClose()
+                  const html =
+                    "<h3 style='text-align:center;'><div class='sa-icon success'><span></span></div>訓練完成</h3>"
+                  return showBox(html, 'message')
+                }
+              })
+          }
+        })
+    })
+  }
+}
+
+window.onfocus = () => {
+  checkRasaStatus()
 }

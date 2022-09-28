@@ -4,10 +4,12 @@ const passport = require('../../config/passport')
 const storiesController = require('../../controllers/pages/stories-controller')
 const userController = require('../../controllers/pages/user-controller')
 const admin = require('./modules/admin')
+const train = require('./modules/train')
 const { authenticated, authenticatedAdmin } = require('../../middleware/auth')
 const { generalErrorHandler } = require('../../middleware/error-handler')
 
 router.use('/admin', authenticatedAdmin, admin)
+router.use('/train', authenticated, train)
 
 router.get('/signin', userController.signInPage)
 router.post(
