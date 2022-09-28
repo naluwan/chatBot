@@ -245,16 +245,22 @@ const storiesServices = {
         const hasStep = hasStory[0].steps.filter(
           step => step.user === oriUserSay || step.intent === oriUserSay
         )
-        console.log(hasStep)
+
         if (!hasStep.length) throw new Error('查無此使用者對話，請重新嘗試')
 
         const storiesId = data.filter(item => item.name === 'fragments')[0].id
         const nluId = data.filter(item => item.name === 'nlu-json')[0].id
-        return Promise.all([TrainingData.findByPk(storiesId), TrainingData.findByPk(nluId)])
+        const domainId = data.filter(item => item.name === 'domain')[0].id
+        return Promise.all([
+          TrainingData.findByPk(storiesId),
+          TrainingData.findByPk(nluId),
+          TrainingData.findByPk(domainId)
+        ])
       })
-      .then(([storiesData, nluData]) => {
+      .then(([storiesData, nluData, domainData]) => {
         const stories = JSON.parse(storiesData.content).stories
         const nlu = JSON.parse(nluData.content)
+        const domain = JSON.parse(domainData.content)
         const repeat = nlu.rasa_nlu_data.common_examples.filter(nluItem => nluItem.text === userSay)
         if (repeat.length) throw new Error('使用者例句重複，請重新嘗試')
         stories.map(item => {
@@ -282,9 +288,18 @@ const storiesServices = {
             return nluItem
           })
         }
+
+        const domainIntents = domain.intents
+        for (let i = 0; i < domainIntents.length; i += 1) {
+          if (domainIntents[i] === oriUserSay) {
+            domainIntents.splice(i, 1)
+          }
+        }
+        domain.intents.push(userSay)
         return Promise.all([
           storiesData.update({ content: JSON.stringify({ stories }) }),
-          nluData.update({ content: JSON.stringify(nlu) })
+          nluData.update({ content: JSON.stringify(nlu) }),
+          domainData.update({ content: JSON.stringify(domain) })
         ])
       })
       .then(() => {
@@ -363,6 +378,7 @@ const storiesServices = {
             for (let i = 0; i < domainIntents.length; i += 1) {
               if (domainIntents[i] === intent) {
                 domainIntents.splice(i, 1)
+                i--
               }
             }
             return intent
@@ -401,15 +417,41 @@ const storiesServices = {
 
     return TrainingData.findAll({ where: { userId } })
       .then(data => {
+        // 驗證此故事是否存在
+        const stories = JSON.parse(
+          data.filter(item => item.name === 'fragments')[0].content
+        ).stories
+        const hasStory = stories.filter(item => item.story === storyName)
+        if (!hasStory.length) throw new Error('查無此故事資料，請重新嘗試')
+
+        const hasStep = hasStory[0].steps.filter(step => step.intent === intent)
+
+        if (!hasStep.length) throw new Error('查無此意圖對話例句，請重新嘗試')
+
         const nluId = data.filter(item => item.name === 'nlu-json')[0].id
         return TrainingData.findByPk(nluId)
       })
       .then(nluData => {
         const repeat = []
+        const hasIntent = []
         const nlu = JSON.parse(nluData.content)
+
+        // 確認是否有這個意圖的例句
+        nlu.rasa_nlu_data.common_examples.map(nluItem => {
+          if (nluItem.intent === intent) {
+            hasIntent.push(nluItem)
+          }
+          return nluItem
+        })
+
+        if (!hasIntent.length) throw new Error('查無與該例句相同的意圖，請重新嘗試')
+
+        // 篩選出意圖不同和該使用者對話的原始例句
         nlu.rasa_nlu_data.common_examples = nlu.rasa_nlu_data.common_examples.filter(
           nluItem => nluItem.intent !== intent || nluItem.text === intent
         )
+
+        // 確認是否重複
         examples.map(example => {
           return nlu.rasa_nlu_data.common_examples.map(nluItem => {
             if (example === nluItem.text) {
@@ -419,6 +461,8 @@ const storiesServices = {
           })
         })
         if (repeat.length) throw new Error('例句重複，請重新嘗試')
+
+        // 增加新的例句
         examples.map(example => {
           return nlu.rasa_nlu_data.common_examples.push({ text: example, intent, entities: [] })
         })

@@ -35,6 +35,11 @@ const adminController = {
     storiesServices.deleteStory(req, (err, data) =>
       err ? next(err) : res.json({ status: 'success', data })
     )
+  },
+  putExamples: (req, res, next) => {
+    storiesServices.putExamples(req, (err, data) =>
+      err ? next(err) : res.json({ status: 'success', data })
+    )
   }
 }
 
