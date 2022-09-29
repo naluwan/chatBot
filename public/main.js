@@ -345,6 +345,10 @@ window.onload = () => {
   if (document.querySelector('#train-button')) {
     const trainBtn = document.querySelector('#train-button')
     trainBtn.addEventListener('click', e => {
+      const userId = e.target.dataset.userid || ''
+      const getTrainDataUrl = userId
+        ? `http://localhost:3333/train/trainData/${userId}`
+        : 'http://localhost:3333/train/trainData'
       fetch('http://192.168.10.105:5005/status')
         .then(res => res.json())
         .then(data => data.num_active_training_jobs)
@@ -355,7 +359,7 @@ window.onload = () => {
             loading()
             trainBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin fa-fw"></i>  機器人訓練中'
             trainBtn.setAttribute('disabled', '')
-            fetch('http://localhost:3333/train/trainData')
+            fetch(getTrainDataUrl)
               .then(res => res.json())
               .then(data => {
                 return fetch(
