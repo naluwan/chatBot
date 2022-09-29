@@ -1,9 +1,19 @@
 <h1>故事流程</h1>
-<div class='pt-3'>
-  <button type='button' class='btn btn-warning' id='train-button'>執行訓練</button>
-  <a href='/stories/create'>
-    <button type='button' class='btn btn-success'>新增故事流程</button>
-  </a>
+<div class='pt-3 d-flex justify-content-between'>
+  <div class="buttons">
+    <button type='button' class='btn btn-warning' id='train-button'>執行訓練</button>
+    <a href='/stories/create'>
+      <button type='button' class='btn btn-success'>新增故事流程</button>
+    </a>
+  </div>
+  <div class="col-4">
+    <form action="/stories" method="get">
+      <div class="input-group flex-nowrap">
+        <span class="input-group-text" id="addon-wrapping">&#128269;</span>
+        <input type="text" class="form-control" placeholder="搜尋..." aria-label="搜尋" name="keyword" aria-describedby="addon-wrapping" autocomplete="off" onchange="location.href='?keyword='+this.value">
+      </div>
+    </form>
+  </div>
 </div>
 <hr />
 <div class='row mt-3'>

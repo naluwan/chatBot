@@ -7,13 +7,14 @@ const storiesServices = {
     const DEFAULT_LIMIT = 9
     const page = Number(req.query.page) || 1
     const limit = Number(req.query.limit) || DEFAULT_LIMIT
+    const keyword = req.query.keyword || ''
     const offset = getOffset(limit, page)
     const { id } = req.user
     return TrainingData.findAll({ where: { userId: id }, raw: true })
       .then(data => {
         const stories = JSON.parse(
           data.filter(item => item.name === 'fragments')[0].content
-        ).stories
+        ).stories.filter(item => item.story.includes(keyword))
         return cb(null, { stories, pagination: getPagination(limit, page, stories.length), offset })
       })
       .catch(err => cb(err))
