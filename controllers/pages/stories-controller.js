@@ -11,6 +11,10 @@ const storiesController = {
       } else {
         currentStories = data.stories.slice(data.offset, data.offset + 9)
       }
+      if (!currentStories.length) {
+        req.flash('warning_messages', '查無相關資料')
+        return res.redirect('/stories')
+      }
       res.render('stories', { stories: currentStories, pagination: data.pagination })
     })
   },
