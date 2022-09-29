@@ -1,5 +1,5 @@
 const { TrainingData } = require('../../models')
-const storiesServices = require('../../services/stories-services')
+const { storiesServices } = require('../../services')
 
 const storiesController = {
   getStories: (req, res, next) => {
