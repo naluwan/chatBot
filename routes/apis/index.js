@@ -6,8 +6,10 @@ const userController = require('../../controllers/apis/user-controller')
 const { authenticated, authenticateAdmin } = require('../../middleware/api-auth')
 const { apiErrorHandler } = require('../../middleware/error-handler')
 const admin = require('./modules/admin')
+const train = require('./modules/train')
 
 router.use('/admin', authenticated, authenticateAdmin, admin)
+router.use('/train', authenticated, train)
 
 router.put('/stories/response/:storyName/:action', authenticated, storiesController.putResponse)
 router.put('/nlu/examples/:storyName', authenticated, storiesController.putExamples)
