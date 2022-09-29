@@ -1,23 +1,29 @@
 const { TrainingData } = require('../models')
 const { getStoryInfo } = require('../helpers/model-helpers')
+const { getOffset, getPagination } = require('../helpers/pagination-helper')
 
 const storiesServices = {
   getStories: (req, cb) => {
+    const DEFAULT_LIMIT = 9
+    const page = Number(req.query.page) || 1
+    const limit = Number(req.query.limit) || DEFAULT_LIMIT
+    const offset = getOffset(limit, page)
     const { id } = req.user
     return TrainingData.findAll({ where: { userId: id }, raw: true })
       .then(data => {
         const stories = JSON.parse(
           data.filter(item => item.name === 'fragments')[0].content
         ).stories
-        return cb(null, { stories })
+        return cb(null, { stories, pagination: getPagination(limit, page, stories.length), offset })
       })
       .catch(err => cb(err))
   },
   getStory: (req, cb) => {
     const { id } = req.user
     const { storyName } = req.params
+    const page = req.query.page ? req.query.page : 1
     return getStoryInfo(id, storyName, cb)
-      .then(story => cb(null, { story }))
+      .then(story => cb(null, { story, page }))
       .catch(err => cb(err))
   },
   postStory: (req, cb) => {

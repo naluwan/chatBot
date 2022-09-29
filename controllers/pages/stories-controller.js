@@ -3,13 +3,20 @@ const storiesServices = require('../../services/stories-services')
 
 const storiesController = {
   getStories: (req, res, next) => {
-    storiesServices.getStories(req, (err, data) =>
-      err ? next(err) : res.render('stories', { stories: data.stories })
-    )
+    storiesServices.getStories(req, (err, data) => {
+      if (err) return next(err)
+      let currentStories
+      if (!data.offset) {
+        currentStories = data.stories.slice(0, 9)
+      } else {
+        currentStories = data.stories.slice(data.offset, data.offset + 9)
+      }
+      res.render('stories', { stories: currentStories, pagination: data.pagination })
+    })
   },
   getStory: (req, res, next) => {
     storiesServices.getStory(req, (err, data) =>
-      err ? next(err) : res.render('story', { story: data.story })
+      err ? next(err) : res.render('story', { story: data.story, page: data.page })
     )
   },
   postStory: (req, res, next) => {

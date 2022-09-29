@@ -14,7 +14,7 @@
           <h5 class='card-title'>{{this.story}}</h5>
         </div>
         <div class='card-footer'>
-          <a href='/stories/{{this.story}}' class='btn btn-primary'>查看</a>
+          <a href='/stories/{{this.story}}?page={{../pagination.currentPage}}' class='btn btn-primary'>查看</a>
           {{#ifNot this.story '問候語'}}
             <button
               type='button'
@@ -32,6 +32,29 @@
     </div>
   {{/each}}
 </div>
+<nav class="mt-3" aria-label="page navigation">
+  <ul class="pagination justify-content-center">
+    <li class="page-item {{#ifCond pagination.currentPage 1}}disabled{{/ifCond}}">
+      <a class="page-link" href="/stories?page={{pagination.prev}}" aria-label="Previous">
+        <span aria-hidden="true">&laquo;</span>
+      </a>
+    </li>
+    {{#each pagination.pages}}
+      {{#ifCond this ../pagination.currentPage}}
+        <li class="page-item active"><a class="page-link" href="#">{{this}}</a></li>
+      {{else}}
+        <li class="page-item">
+          <a class="page-link" href="/stories?page={{this}}">{{this}}</a>
+        </li>
+      {{/ifCond}}
+    {{/each}}
+    <li class="page-item {{#ifCond pagination.currentPage pagination.totalPage}}disabled{{/ifCond}}">
+      <a class="page-link" href="/stories?page={{pagination.next}}" aria-label="Next">
+        <span aria-hidden="true">&raquo;</span>
+      </a>
+    </li>
+  </ul>
+</nav>
 
 <div
   class='modal fade'
