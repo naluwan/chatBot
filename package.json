@@ -1,5 +1,5 @@
 {
-  "name": "forum-express-grading",
+  "name": "chat-bot",
   "version": "3.0.0",
   "main": "app.js",
   "scripts": {

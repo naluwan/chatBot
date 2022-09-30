@@ -1,4 +1,5 @@
 const { userServices } = require('../../services')
+const { User } = require('../../models')
 const userController = {
   signUpPage: (req, res) => {
     res.render('signup')
@@ -24,6 +25,20 @@ const userController = {
       req.flash('success_messages', '登出成功')
       res.redirect('/signin')
     })
+  },
+  getUser: (req, res, next) => {
+    return User.findByPk(req.params.id, {
+      attributes: ['id', 'cpnyName', 'chatbotName', 'email', 'image']
+    })
+      .then(user => {
+        if (!user) {
+          req.flash('warning_messages', '查無使用者資料，請重新嘗試')
+          return res.redirect('back')
+        }
+        return res.render('users/profile', { user: user.toJSON() })
+      })
+      .catch(err => next(err))
+  },
   }
 }
 

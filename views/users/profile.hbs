@@ -1,0 +1,16 @@
+<div class='col mt-5 d-flex border bg-white'>
+  <div class='col-md-4'>
+    <img
+      class='img-responsive center-block'
+      src='{{user.image}}'
+      style='width: 250px;transition: opacity 0.5s; opacity:0;'
+      onload='this.style.opacity=1;'
+    />
+  </div>
+  <div class='col-md-8 my-3'>
+    <h2>{{user.cpnyName}}</h2>
+    <p class='pt-3'>機器人名稱：{{user.chatbotName}}</p>
+    <p>帳號：{{user.email}}</p>
+    <a href='/users/{{user.id}}/edit' class='btn btn-primary'>編輯個人資料</a>
+  </div>
+</div>
