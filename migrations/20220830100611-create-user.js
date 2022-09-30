@@ -14,6 +14,9 @@ module.exports = {
       cpny_name: {
         type: Sequelize.STRING
       },
+      chatbot_name: {
+        type: Sequelize.STRING
+      },
       email: {
         type: Sequelize.STRING
       },

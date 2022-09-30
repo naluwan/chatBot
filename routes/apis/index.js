@@ -5,6 +5,7 @@ const storiesController = require('../../controllers/apis/stories-controller')
 const userController = require('../../controllers/apis/user-controller')
 const { authenticated, authenticateAdmin } = require('../../middleware/api-auth')
 const { apiErrorHandler } = require('../../middleware/error-handler')
+const upload = require('../../middleware/multer')
 const admin = require('./modules/admin')
 const train = require('./modules/train')
 
@@ -18,7 +19,7 @@ router.delete('/stories/:storyName', authenticated, storiesController.deleteStor
 router.get('/stories/:storyName', authenticated, storiesController.getStory)
 router.post('/stories', authenticated, storiesController.postStory)
 router.get('/stories', authenticated, storiesController.getStories)
-router.post('/signup', userController.signUp)
+router.post('/signup', upload.single('image'), userController.signUp)
 router.get('/auth', authenticated, userController.auth)
 router.post(
   '/signin',

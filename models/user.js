@@ -15,6 +15,8 @@ module.exports = (sequelize, DataTypes) => {
     {
       cpnyId: DataTypes.STRING,
       cpnyName: DataTypes.STRING,
+      chatbotName: DataTypes.STRING,
+      image: DataTypes.STRING,
       email: DataTypes.STRING,
       password: DataTypes.STRING,
       isAdmin: DataTypes.BOOLEAN,

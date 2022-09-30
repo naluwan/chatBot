@@ -1,7 +1,13 @@
 <div class='mb-4 text-center'>
   <h1 class='h3 font-weight-normal mb-3'>帳號註冊</h1>
 </div>
-<form class='form-signup' action='/signup' method='POST' style='width: 100%;'>
+<form
+  class='form-signup'
+  action='/signup'
+  method='POST'
+  style='width: 100%;'
+  enctype='multipart/form-data'
+>
   <div class='form-row mb-3'>
     <label class='form-label' for='cpnyId'>公司代號</label>
     <input
@@ -23,6 +29,18 @@
       name='cpnyName'
       class='form-control'
       placeholder='公司名稱'
+      autocomplete='off'
+      required
+    />
+  </div>
+  <div class='form-row mb-3'>
+    <label class='form-label' for='chatbotName'>機器人名稱</label>
+    <input
+      type='text'
+      id='chatbotName'
+      name='chatbotName'
+      class='form-control'
+      placeholder='機器人顯示名稱'
       autocomplete='off'
       required
     />
@@ -61,6 +79,17 @@
       placeholder='Password Check'
       autocomplete='off'
       required
+    />
+  </div>
+  <div class='form-row mb-3'>
+    <label class='form-label' for='image'>機器人頭像</label>
+    <input
+      class='form-control'
+      type='file'
+      class='form-control-file'
+      id='image'
+      name='image'
+      placeholder='有預設頭像，可之後再做更改'
     />
   </div>
   <button class='btn btn-primary btn-block' type='submit'>送出</button>
