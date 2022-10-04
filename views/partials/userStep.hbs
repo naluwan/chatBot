@@ -25,7 +25,7 @@
   <div class='modal-dialog modal-dialog-centered'>
     <div class='modal-content'>
       <form action={{#ifCond role 'admin' }}'/admin/stories/userSay/{{userId}}/{{storyName}}?_method=PUT'
-        {{else}}'/stories/userSay/{{userId}}/{{storyName}}?_method=PUT' {{/ifCond}} method='post'>
+        {{else}}'/stories/userSay/{{storyName}}?_method=PUT' {{/ifCond}} method='post'>
         <div class='modal-header'>
           <h5 class='modal-title' id='editUserQuesModal-{{@index}}-label'>編輯使用者對話</h5>
           <button type='button' class='btn-close' data-bs-dismiss='modal' aria-label='Close'></button>

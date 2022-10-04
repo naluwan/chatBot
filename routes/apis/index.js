@@ -14,7 +14,7 @@ router.use('/train', authenticated, train)
 
 router.put('/stories/response/:storyName/:action', authenticated, storiesController.putResponse)
 router.put('/nlu/examples/:storyName', authenticated, storiesController.putExamples)
-router.put('/stories/userSay/:userId/:storyName', authenticated, storiesController.putUserSay)
+router.put('/stories/userSay/:storyName', authenticated, storiesController.putUserSay)
 router.delete('/stories/:storyName', authenticated, storiesController.deleteStory)
 router.get('/stories/:storyName', authenticated, storiesController.getStory)
 router.post('/stories', authenticated, storiesController.postStory)
