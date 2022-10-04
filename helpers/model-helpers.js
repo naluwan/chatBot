@@ -21,11 +21,8 @@ const getStoryInfo = (userId, storyName, cb) => {
           const examples = nlu.filter(
             nluItem => nluItem.intent === step.intent && nluItem.text !== step.intent
           )
-          const currentExample = examples.map((example, index) => {
-            let exampleStr = ''
-            exampleStr = exampleStr + example.text
-            return exampleStr
-          })
+
+          const currentExample = examples.map(example => example.text)
           step.examples = currentExample
         }
         return step

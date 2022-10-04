@@ -362,10 +362,19 @@ const storiesServices = {
           const updateStories = stories.filter(item => item.story !== storyName)
           deleteStory = stories.filter(item => item.story === storyName)[0]
           deleteStory.steps.map(step => {
+            // 抓取機器人回覆
             if (step.action) {
               step.response = JSON.parse(
                 JSON.stringify(responses[step.action][0].text).replace(/ \\n/g, '\\r')
               )
+            }
+            // 抓取使用者例句
+            if (step.intent) {
+              const examples = nlu.rasa_nlu_data.common_examples.filter(
+                nluItem => nluItem.intent === step.intent && nluItem.text !== step.intent
+              )
+              const currentExample = examples.map(example => example.text)
+              step.examples = currentExample
             }
             return step
           })
