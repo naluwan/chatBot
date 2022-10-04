@@ -13,9 +13,17 @@ const adminServices = {
     ])
       .then(([users, data, storyName]) => {
         users.map(user => delete user.password)
+
+        // 驗證使用者是否存在
+        if (req.query.userId) {
+          const userCheck = users.filter(user => user.id === Number(req.query.userId))
+          if (!userCheck.length) throw new Error('查無該使用者，請重新嘗試')
+        }
+
         if (!data) {
           return cb(null, { users, stories })
         }
+
         stories = JSON.parse(data.filter(item => item.name === 'fragments')[0].content).stories
         const responses = JSON.parse(
           data.filter(item => item.name === 'domain')[0].content
