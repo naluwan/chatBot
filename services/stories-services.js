@@ -15,6 +15,33 @@ const storiesServices = {
         const stories = JSON.parse(
           data.filter(item => item.name === 'fragments')[0].content
         ).stories.filter(item => item.story.includes(keyword))
+        const nlu = JSON.parse(data.filter(item => item.name === 'nlu-json')[0].content)
+          .rasa_nlu_data.common_examples
+        const responses = JSON.parse(
+          data.filter(item => item.name === 'domain')[0].content
+        ).responses
+
+        stories.map(story => {
+          return story.steps.map(step => {
+            // 抓取機器人回覆
+            if (step.action) {
+              step.response = JSON.parse(
+                JSON.stringify(responses[step.action][0].text).replace(/ \\n/g, '\\r')
+              )
+            }
+            // 抓取使用者例句
+            if (step.intent) {
+              const examples = nlu.filter(
+                nluItem => nluItem.intent === step.intent && nluItem.text !== step.intent
+              )
+
+              const currentExample = examples.map(example => example.text)
+              step.examples = currentExample
+            }
+            return step
+          })
+        })
+
         return cb(null, { stories, pagination: getPagination(limit, page, stories.length), offset })
       })
       .catch(err => cb(err))
