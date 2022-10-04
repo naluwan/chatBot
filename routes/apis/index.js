@@ -12,6 +12,10 @@ const train = require('./modules/train')
 router.use('/admin', authenticated, authenticateAdmin, admin)
 router.use('/train', authenticated, train)
 
+router.get('/users/:id/edit', authenticated, userController.editUser)
+router.put('/users/:id', authenticated, upload.single('image'), userController.putUser)
+router.get('/users/:id', authenticated, userController.getUser)
+
 router.put('/stories/response/:storyName/:action', authenticated, storiesController.putResponse)
 router.put('/nlu/examples/:storyName', authenticated, storiesController.putExamples)
 router.put('/stories/userSay/:storyName', authenticated, storiesController.putUserSay)

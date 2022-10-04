@@ -44,6 +44,41 @@ const userServices = {
         return TrainingData.bulkCreate(trainDataArr).then(() => cb(null, user))
       })
       .catch(err => cb(err))
+  },
+  getUser: (req, cb) => {
+    return User.findByPk(req.params.id, {
+      attributes: ['id', 'cpnyName', 'chatbotName', 'email', 'image']
+    })
+      .then(user => {
+        if (!user) throw new Error('查無該使用者資料')
+        cb(null, user.toJSON())
+      })
+      .catch(err => cb(err))
+  },
+  editUser: (req, cb) => {
+    return User.findByPk(req.params.id, { attributes: ['id', 'chatbotName'] })
+      .then(user => {
+        if (!user) throw new Error('查無使用者資料')
+        cb(null, user.toJSON())
+      })
+      .catch(err => cb(err))
+  },
+  putUser: (req, cb) => {
+    const { chatbotName } = req.body
+    const { file } = req
+    return Promise.all([User.findByPk(req.params.id), imgurFileHandler(file)])
+      .then(([user, filePath]) => {
+        if (!user) throw new Error('查無使用者資料')
+
+        return user.update({
+          chatbotName,
+          image: filePath || user.image
+        })
+      })
+      .then(user => {
+        cb(null, user.toJSON())
+      })
+      .catch(err => cb(err))
   }
 }
 
