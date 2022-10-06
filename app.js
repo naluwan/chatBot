@@ -27,9 +27,9 @@ app.use(express.json())
 app.use(
   cors({
     credentials: true,
-    preflightContinue: true,
+    preflightContinue: false,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-    origin: true
+    origin: '*'
   })
 )
 app.use(session({ secret: process.env.SESSION_SECRET, resave: false, saveUninitialized: false }))
