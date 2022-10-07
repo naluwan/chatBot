@@ -18,9 +18,7 @@ const trainServices = {
         const config = yaml.dump(JSON.parse(data.filter(item => item.name === 'config')[0].content))
         const domain = yaml.dump(JSON.parse(data.filter(item => item.name === 'domain')[0].content))
         const nlu = JSON.parse(data.filter(item => item.name === 'nlu-json')[0].content)
-        const model = req.params.userId
-          ? `model-admin-${user.cpnyName}-${date}T${time}`
-          : `model-${user.cpnyName}-${date}T${time}`
+        const model = req.params.userId ? `model-admin-${date}T${time}` : `model-${date}T${time}`
         return {
           config,
           nlu: { nlu },
