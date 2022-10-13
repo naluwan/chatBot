@@ -1,4 +1,3 @@
-const { TrainingData } = require('../../models')
 const { storiesServices } = require('../../services')
 
 const storiesController = {
@@ -77,13 +76,7 @@ const storiesController = {
     })
   },
   getAllActions: (req, res, next) => {
-    const { id } = req.user
-    return TrainingData.findAll({ where: { userId: id }, raw: true })
-      .then(data => {
-        const actions = JSON.parse(data.filter(item => item.name === 'domain')[0].content).actions
-        res.json(actions)
-      })
-      .catch(err => next(err))
+    storiesServices.getAllActions(req, (err, data) => (err ? next(err) : res.json(data)))
   }
 }
 

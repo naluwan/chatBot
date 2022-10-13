@@ -515,6 +515,15 @@ const storiesServices = {
       .then(() => getStoryInfo(userId, storyName, cb))
       .then(updateStory => cb(null, { story: updateStory }))
       .catch(err => cb(err))
+  },
+  getAllActions: (req, cb) => {
+    const { id } = req.user
+    return TrainingData.findAll({ where: { userId: id }, raw: true })
+      .then(data => {
+        const actions = JSON.parse(data.filter(item => item.name === 'domain')[0].content).actions
+        cb(null, actions)
+      })
+      .catch(err => cb(err))
   }
 }
 

@@ -1,5 +1,5 @@
 // 機器人回覆代號產生器
-function randomBotResName() {
+async function randomBotResName() {
   const lower = 'abcdefghijklmnopqrstuvwxyz'
   const upper = lower.toUpperCase()
   const num = '1234567890'
@@ -10,11 +10,10 @@ function randomBotResName() {
   }
   let actionsArr = []
   // 回資料庫查找所有actions
-  fetch('http://localhost:3333/stories/actions')
+  actionsArr = await fetch('http://localhost:3333/stories/actions')
     .then(res => res.json())
-    .then(actions => {
-      actionsArr = actions
-    })
+    .then(actions => actions)
+
   // 驗證action是否重複
   if (actionsArr.some(action => action === text)) {
     randomBotResName()
@@ -113,8 +112,9 @@ function clickDeleteBtn() {
     deleteBtn.addEventListener('click', e => {
       const target = e.target
       target.parentElement.parentElement.parentElement.parentElement.parentElement.remove()
-      const isLastUser = document.querySelector('.step-panel').lastElementChild.getAttribute('id')
+      const isLastUser = document.querySelector('.step-panel').lastElementChild?.getAttribute('id')
       const userStepBtn = document.querySelector('#userStepBtn')
+      console.log(isLastUser)
       if (isLastUser === 'userStepDiv') {
         userStepBtn.setAttribute('disabled', '')
       } else {

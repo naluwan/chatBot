@@ -35,6 +35,9 @@ const storiesController = {
     storiesServices.putExamples(req, (err, data) =>
       err ? next(err) : res.json({ status: 'success', data })
     )
+  },
+  getAllActions: (req, res, next) => {
+    storiesServices.getAllActions(req, (err, data) => (err ? next(err) : res.json(data)))
   }
 }
 
