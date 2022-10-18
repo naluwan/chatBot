@@ -41,6 +41,36 @@ const trainServices = {
         cb(null, { stories, domain, nlu })
       })
       .catch(err => cb(err))
+  },
+  postAllTrainData: (req, cb) => {
+    const userId = req.body.userId ? req.body.userId : req.user.id
+    const { stories, nlu, domain } = req.body
+    return TrainingData.findAll({ where: { userId } })
+      .then(data => {
+        const storiesId = data.filter(item => item.name === 'fragments')[0].id
+        const nluId = data.filter(item => item.name === 'nlu-json')[0].id
+        const domainId = data.filter(item => item.name === 'domain')[0].id
+        return Promise.all([
+          TrainingData.findByPk(storiesId),
+          TrainingData.findByPk(nluId),
+          TrainingData.findByPk(domainId)
+        ])
+      })
+      .then(([storiesData, nluData, domainData]) => {
+        return Promise.all([
+          storiesData.update({ content: JSON.stringify({ stories }) }),
+          nluData.update({ content: JSON.stringify(nlu) }),
+          domainData.update({ content: JSON.stringify(domain) })
+        ])
+      })
+      .then(([stories, nlu, domain]) =>
+        cb(null, {
+          stories: JSON.parse(stories.content).stories,
+          nlu: JSON.parse(nlu.content),
+          domain: JSON.parse(domain.content)
+        })
+      )
+      .catch(err => cb(err))
   }
 }
 
