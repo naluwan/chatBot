@@ -38,7 +38,8 @@ const trainServices = {
         ).stories
         const domain = JSON.parse(data.filter(item => item.name === 'domain')[0].content)
         const nlu = JSON.parse(data.filter(item => item.name === 'nlu-json')[0].content)
-        cb(null, { stories, domain, nlu })
+        const config = JSON.parse(data.filter(item => item.name === 'config')[0].content)
+        cb(null, { stories, domain, nlu, config })
       })
       .catch(err => cb(err))
   },
