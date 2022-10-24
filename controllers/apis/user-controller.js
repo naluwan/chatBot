@@ -6,7 +6,7 @@ const userController = {
       // expiresIn: '30d' => token有效期為30天
       const userData = req.user.toJSON()
       delete userData.password
-      const token = jwt.sign(userData, process.env.JWT_SECRET, { expiresIn: '10000' })
+      const token = jwt.sign(userData, process.env.JWT_SECRET, { expiresIn: '8h' })
       res.json({
         status: 'success',
         token,
