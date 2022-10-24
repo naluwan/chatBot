@@ -39,9 +39,12 @@ const userController = {
     )
   },
   putUser: (req, res, next) => {
-    userServices.putUser(req, (err, data) =>
-      err ? next(err) : res.json({ status: 'success', data })
-    )
+    userServices.putUser(req, (err, data) => {
+      if (err) next(err)
+      const user = data
+      delete user.password
+      res.json({ status: 'success', data: user })
+    })
   }
 }
 
