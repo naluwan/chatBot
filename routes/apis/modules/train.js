@@ -7,5 +7,7 @@ router.post('/allTrainData', trainController.postAllTrainData)
 router.get('/allTrainData', trainController.getAllTrainData)
 router.get('/trainData/:userId', authenticateAdmin, trainController.getTrainData)
 router.get('/trainData', trainController.getTrainData)
+router.get('/categories', trainController.getAllStoriesCategories)
+router.post('/category', trainController.createCategory)
 
 module.exports = router

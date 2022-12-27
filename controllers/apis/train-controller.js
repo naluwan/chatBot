@@ -13,6 +13,16 @@ const trainController = {
     trainServices.postAllTrainData(req, (err, data) =>
       err ? next(err) : res.json({ status: 'success', data })
     )
+  },
+  getAllStoriesCategories: (req, res, next) => {
+    trainServices.getAllStoriesCategories(req, (err, data) =>
+      err ? next(err) : res.json({ status: 'success', data })
+    )
+  },
+  createCategory: (req, res, next) => {
+    trainServices.createCategory(req, (err, categories) =>
+      err ? next(err) : res.json({ status: 'success', categories })
+    )
   }
 }
 

@@ -1,4 +1,4 @@
-const { TrainingData, User } = require('../models')
+const { TrainingData, User, Category } = require('../models')
 const yaml = require('js-yaml')
 
 const trainServices = {
@@ -71,6 +71,25 @@ const trainServices = {
           domain: JSON.parse(domain.content)
         })
       )
+      .catch(err => cb(err))
+  },
+  getAllStoriesCategories: (req, cb) => {
+    return Category.findAll({ where: { cpnyId: req.user.cpnyId } })
+      .then(data => cb(null, data))
+      .catch(err => cb(err))
+  },
+  createCategory: (req, cb) => {
+    const cpnyId = req.user.cpnyId
+    const { name } = req.body
+    return Category.findOne({ where: { name, cpnyId } })
+      .then(category => {
+        if (category) throw new Error('此類別已存在')
+        return Category.create({
+          name,
+          cpnyId
+        }).then(() => Category.findAll({ where: { cpnyId } }))
+      })
+      .then(categories => cb(null, categories))
       .catch(err => cb(err))
   }
 }
