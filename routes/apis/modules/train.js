@@ -9,5 +9,6 @@ router.get('/trainData/:userId', authenticateAdmin, trainController.getTrainData
 router.get('/trainData', trainController.getTrainData)
 router.get('/categories', trainController.getAllStoriesCategories)
 router.post('/category', trainController.createCategory)
+router.delete('/category', trainController.deleteCategory)
 
 module.exports = router

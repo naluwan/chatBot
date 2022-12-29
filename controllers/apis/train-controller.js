@@ -20,9 +20,14 @@ const trainController = {
     )
   },
   createCategory: (req, res, next) => {
-    trainServices.createCategory(req, (err, categories) =>
-      err ? next(err) : res.json({ status: 'success', categories })
+    trainServices.createCategory(req, (err, data) =>
+      err ? next(err) : res.json({ status: 'success', data })
     )
+  },
+  deleteCategory: (req, res, next) => {
+    trainServices.deleteCategory(req, (err, data) => {
+      err ? next(err) : res.json({ status: 'success', data })
+    })
   }
 }
 

@@ -91,6 +91,20 @@ const trainServices = {
       })
       .then(categories => cb(null, categories))
       .catch(err => cb(err))
+  },
+  deleteCategory: (req, cb) => {
+    const cpnyId = req.user.cpnyId
+    const { name } = req.body
+    console.log('name ===> ', name)
+    console.log('req body ===> ', req.body)
+    return Category.findOne({ where: { name, cpnyId } })
+      .then(category => {
+        if (!category) throw new Error('查無此類別')
+        return category.destroy()
+      })
+      .then(() => Category.findAll({ where: { cpnyId } }))
+      .then(categories => cb(null, categories))
+      .catch(err => cb(err))
   }
 }
 
