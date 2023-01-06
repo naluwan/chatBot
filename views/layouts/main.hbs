@@ -40,6 +40,7 @@
     {{#if isAuthenticated}}
       <!-- 導入webchat視窗 -->
       <script>!(function () {
+        var title = document.querySelector("title").innerText;
         let e = document.createElement("script"),
           t = document.head || document.getElementsByTagName("head")[0];
         (e.src =
@@ -55,7 +56,8 @@
                 // socketPath: "/socket.io/",
                 profileAvatar: `{{user.image}}`,
                 inputTextFieldHint: "請輸入內容....",
-                title: `{{user.chatbotName}}`,
+                //title: `{{user.chatbotName}}`,
+                title: title,
                 subtitle: "",
                 params: { "storage": "session" },
                 showFullScreenButton: true,
@@ -63,6 +65,34 @@
                 showMessageDate: true,
                 // embedded: true,
                 // add other props here
+                onSocketEvent:{
+                  "bot_uttered":(res) => {
+                    if(res.text){
+                      fetch('http://192.168.10.105:8010/tts/offline',{
+                        method:'POST',
+                        body:JSON.stringify({text:res.text}),
+                        headers:{
+                          'Content-Type': 'application/json'
+                        }
+                      })
+                      .then(res => res.json())
+                      .then(text2voice => {
+                        console.log('base64 url ==> ', text2voice)
+                        if(document.querySelector('#botResVoice')){
+                          document.querySelector('#botResVoice').src = `data:audio/wav;base64,${text2voice.result}`
+                        }else{
+                          const widgetContainer = document.querySelector('.rw-widget-container')
+                          const audioNode = document.createElement('audio')
+                          audioNode.id = 'botResVoice'
+                          audioNode.src = `data:audio/wav;base64,${text2voice.result}`
+                          audioNode.setAttribute('autoPlay','true')
+                          audioNode.innerHTML = `<track src="botResponse_zh.vtt" kind="captions" />`
+                          widgetContainer.appendChild(audioNode)
+                        }
+                      })
+                    }
+                  }
+                }
               },
               null
             );
