@@ -1,5 +1,5 @@
 const bcrypt = require('bcryptjs')
-const { User, TrainingData } = require('../models')
+const { User, TrainingData, Category } = require('../models')
 const trainingDataList = require('../data/defaultTrainingData.json')
 const { imgurFileHandler } = require('../helpers/file-helpers')
 
@@ -41,7 +41,11 @@ const userServices = {
           }
         })
 
-        return TrainingData.bulkCreate(trainDataArr).then(() => cb(null, user))
+        // TrainingData.bulkCreate(trainDataArr).then(() => cb(null, user))
+        return Promise.all([
+          TrainingData.bulkCreate(trainDataArr),
+          Category.create({ name: '預設故事', cpnyId: user.cpnyId })
+        ]).then(() => cb(null, user))
       })
       .catch(err => cb(err))
   },
