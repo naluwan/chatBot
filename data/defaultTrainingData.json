@@ -101,7 +101,10 @@
             {
               "action": "utter_start"
             }
-          ]
+          ],
+          "metadata": {
+            "category": "預設故事"
+          }
         }
       ]
     }
