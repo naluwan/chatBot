@@ -4,5 +4,13 @@ module.exports = {
   singleQuote: true,
   printWidth: 100,
   tabWidth: 2,
-  arrowParens: 'avoid'
+  arrowParens: 'avoid',
+  overrides: [
+    {
+      files: '**/*.{hbs}',
+      options: {
+        parser: 'glimmer'
+      }
+    }
+  ]
 }

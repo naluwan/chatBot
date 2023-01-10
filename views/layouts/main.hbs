@@ -40,6 +40,21 @@
     {{#if isAuthenticated}}
       <!-- 導入webchat視窗 -->
       <script>!(function () {
+
+        // 暫存語音播放base64 url
+        let voiceUrl
+
+        // 建立audio html tag function
+        function createAudioEle(base64Url){
+          const widgetContainer = document.querySelector('.rw-widget-container')
+          const audioNode = document.createElement('audio')
+          audioNode.id = 'botResVoice'
+          audioNode.src = `data:audio/wav;base64,${base64Url}`
+          audioNode.muted = true
+          audioNode.innerHTML = `<track src="botResponse_zh.vtt" kind="captions" />`
+          widgetContainer.appendChild(audioNode)
+        }
+
         var title = document.querySelector("title").innerText;
         let e = document.createElement("script"),
           t = document.head || document.getElementsByTagName("head")[0];
@@ -66,7 +81,9 @@
                 // embedded: true,
                 // add other props here
                 onSocketEvent:{
+                  // 機器人回覆事件
                   "bot_uttered":(res) => {
+                    //如果機器人回覆內有文字，就傳送到paddle speech伺服器轉換成語音
                     if(res.text){
                       fetch('http://192.168.10.105:8010/tts/offline',{
                         method:'POST',
@@ -77,19 +94,64 @@
                       })
                       .then(res => res.json())
                       .then(text2voice => {
-                        console.log('base64 url ==> ', text2voice)
+                        // 暫存語音檔base64 url
+                        voiceUrl = text2voice.result
+
+                        // 如果有audio html tag就更換語音檔url
                         if(document.querySelector('#botResVoice')){
                           document.querySelector('#botResVoice').src = `data:audio/wav;base64,${text2voice.result}`
-                        }else{
-                          const widgetContainer = document.querySelector('.rw-widget-container')
-                          const audioNode = document.createElement('audio')
-                          audioNode.id = 'botResVoice'
-                          audioNode.src = `data:audio/wav;base64,${text2voice.result}`
-                          audioNode.setAttribute('autoPlay','true')
-                          audioNode.innerHTML = `<track src="botResponse_zh.vtt" kind="captions" />`
-                          widgetContainer.appendChild(audioNode)
                         }
                       })
+                    }
+                  }
+                },
+                onWidgetEvent:{
+                  // 開啟聊天室窗事件
+                  "onChatOpen":() => {
+                    // 創建語音播放按鈕
+                    const voiceBtn = document.createElement('button');
+                    voiceBtn.id = 'voiceBtn';
+
+                    // 語音播放按鈕預設為關閉播放語音
+                    voiceBtn.setAttribute('class','close')
+
+                    // 語音播放按鈕點擊事件
+                    voiceBtn.onclick = function clickVoiceBtn(e) {
+                      // 如果按鈕原本是關閉狀態
+                      if(e.target.classList.contains('close')){
+                        // 如果沒有audio html tag就創建audio html tag
+                        if(!document.querySelector('#botResVoice')){
+                          createAudioEle(voiceUrl)
+                        }
+                        // 將audio html tag設定為自動播放且取消靜音
+                        document.querySelector('#botResVoice').setAttribute('autoplay','')
+                        document.querySelector('#botResVoice').muted = false
+                      }else{
+                        // 如果按鈕原本是開啟狀態，就刪除audio html tag
+                        document.querySelector('#botResVoice').remove()
+                      }
+
+                      // 開啟或關閉按鈕狀態
+                      e.target.classList.toggle('close');
+                    };
+                    /*
+                      因點擊開啟聊天室窗就會立刻執行，無法馬上取得document.querySelector('.rw-toggle-fullscreen-button')
+                      所以需要使用setTimeout()來讓執行時間不同步以獲取document.querySelector('.rw-toggle-fullscreen-button')並添加語音播放按鈕
+                    */
+                    setTimeout(() => {
+                      // 添加語音播放按鈕至聊天室窗上
+                      if (document.querySelector('.rw-chat-open')) {
+                        document
+                          .querySelector('.rw-toggle-fullscreen-button')
+                          .insertAdjacentElement('beforebegin', voiceBtn);
+                      }
+                    }, 0);
+                  },
+                  // 關閉聊天室窗事件
+                  "onChatClose": () => {
+                    // 刪除audio html tag
+                    if(document.querySelector('#botResVoice')){
+                      document.querySelector('#botResVoice').remove()
                     }
                   }
                 }

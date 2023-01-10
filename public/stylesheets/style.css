@@ -271,3 +271,27 @@
     opacity: 1;
   }
 }
+
+#voiceBtn {
+  background: url('https://i.imgur.com/YC8zqUO.png') center/80% no-repeat;
+  border: none;
+  width: 40px;
+  display: inline-block;
+  vertical-align: middle;
+  margin-top: 3px;
+}
+
+#voiceBtn:hover {
+  background: url('https://i.imgur.com/YC8zqUO.png') center/85% no-repeat;
+}
+
+#voiceBtn.close {
+  background: url('https://i.imgur.com/QnHZ08S.png') center/80% no-repeat;
+}
+
+@media screen and (max-width: 390px) {
+  #voiceBtn {
+    width: 30px;
+    padding: 10px 0 10px 0;
+  }
+}
