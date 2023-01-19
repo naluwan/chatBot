@@ -83,26 +83,44 @@
                 onSocketEvent:{
                   // 機器人回覆事件
                   "bot_uttered":(res) => {
-                    //如果機器人回覆內有文字，就傳送到paddle speech伺服器轉換成語音
-                    if(res.text){
-                      fetch('http://192.168.10.105:8010/tts/offline',{
-                        method:'POST',
-                        body:JSON.stringify({text:res.text}),
-                        headers:{
-                          'Content-Type': 'application/json'
-                        }
-                      })
-                      .then(res => res.json())
-                      .then(text2voice => {
-                        // 暫存語音檔base64 url
-                        voiceUrl = text2voice.result
+                    let botResText = '';
 
-                        // 如果有audio html tag就更換語音檔url
-                        if(document.querySelector('#botResVoice')){
-                          document.querySelector('#botResVoice').src = `data:audio/wav;base64,${text2voice.result}`
-                        }
-                      })
+                    // 機器人回覆文字
+                    if (res.text) {
+                      const { text } = res;
+                      botResText += text;
                     }
+
+                    // 機器人回覆按鈕選項，將按鈕選項組進語音字串中
+                    if (res.buttons) {
+                      const { buttons } = res;
+                      buttons.map((button, idx) => {
+                        if (idx + 1 !== buttons.length) {
+                          botResText += `選項${idx + 1}${button.title},`;
+                        } else {
+                          botResText += `選項${idx + 1}${button.title}`;
+                        }
+                        return button;
+                      });
+                    }
+
+                    fetch('http://192.168.10.105:8010/tts/offline',{
+                      method:'POST',
+                      body:JSON.stringify({text:botResText}),
+                      headers:{
+                        'Content-Type': 'application/json'
+                      }
+                    })
+                    .then(res => res.json())
+                    .then(text2voice => {
+                      // 暫存語音檔base64 url
+                      voiceUrl = text2voice.result
+
+                      // 如果有audio html tag就更換語音檔url
+                      if(document.querySelector('#botResVoice')){
+                        document.querySelector('#botResVoice').src = `data:audio/wav;base64,${text2voice.result}`
+                      }
+                    })
                   }
                 },
                 onWidgetEvent:{
