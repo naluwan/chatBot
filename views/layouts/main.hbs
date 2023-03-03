@@ -59,7 +59,7 @@
         let e = document.createElement("script"),
           t = document.head || document.getElementsByTagName("head")[0];
         (e.src =
-          "http://cdn.jsdelivr.net/npm/rasa-webchat@1.0.1/lib/index.js"),
+          "/index.js"),
           // Replace 1.x.x with the version that you want
           (e.async = !0),
           (e.onload = () => {
@@ -69,7 +69,7 @@
                 initPayload: "/get_started",
                 socketUrl: "http://192.168.10.105:5005",
                 // socketPath: "/socket.io/",
-                profileAvatar: `{{user.image}}`,
+                profileAvatar: `https://i.imgur.com/iL6DE9f.png`,
                 inputTextFieldHint: "請輸入內容....",
                 //title: `{{user.chatbotName}}`,
                 title: title,
