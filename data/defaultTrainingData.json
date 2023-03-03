@@ -2,7 +2,7 @@
   {
     "name": "domain",
     "content": {
-      "actions": ["utter_start"],
+      "actions": ["utter_start", "utter_fallback"],
       "entities": [],
       "forms": {},
       "intents": [],
@@ -10,6 +10,11 @@
         "utter_start": [
           {
             "text": "你好!歡迎使用英特內軟體聊天機器人!!"
+          }
+        ],
+        "utter_fallback": [
+          {
+            "text": "抱歉!我無法理解你的意思，請換一種說法再嘗試看看!!"
           }
         ]
       },
@@ -51,7 +56,19 @@
           "constrain_similarities": true
         },
         {
+          "name": "RegexEntityExtractor",
+          "case_sensitive": false,
+          "use_lookup_tables": true,
+          "use_regexes": true,
+          "use_word_boundaries": false
+        },
+        {
           "name": "EntitySynonymMapper"
+        },
+        {
+          "name": "RegexFeaturizer",
+          "case_sensitive": false,
+          "use_word_boundaries": false
         },
         {
           "name": "ResponseSelector",
@@ -100,6 +117,21 @@
             },
             {
               "action": "utter_start"
+            }
+          ],
+          "metadata": {
+            "category": "預設故事"
+          }
+        },
+        {
+          "story": "預設回覆",
+          "steps": [
+            {
+              "intent": "nlu_fallback",
+              "entities": []
+            },
+            {
+              "action": "utter_fallback"
             }
           ],
           "metadata": {
