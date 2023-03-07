@@ -1,4 +1,4 @@
-const { TrainingData, User, Category } = require('../models')
+const { TrainingData, User, Category, Conversation } = require('../models')
 const yaml = require('js-yaml')
 
 const trainServices = {
@@ -104,6 +104,12 @@ const trainServices = {
       })
       .then(() => Category.findAll({ where: { cpnyId } }))
       .then(categories => cb(null, categories))
+      .catch(err => cb(err))
+  },
+  getAllSenderIds: (req, cb) => {
+    const cpnyId = req.user.cpnyId
+    return Conversation.findAll({ where: { cpnyId }, order: [['created_at', 'DESC']] })
+      .then(senderIds => cb(null, senderIds))
       .catch(err => cb(err))
   }
 }

@@ -28,6 +28,11 @@ const trainController = {
     trainServices.deleteCategory(req, (err, data) => {
       err ? next(err) : res.json({ status: 'success', data })
     })
+  },
+  getAllSenderIds: (req, res, next) => {
+    trainServices.getAllSenderIds(req, (err, data) => {
+      err ? next(err) : res.json({ status: 'success', data })
+    })
   }
 }
 
