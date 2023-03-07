@@ -41,6 +41,7 @@
       <!-- 導入webchat視窗 -->
       <script>!(function () {
 
+        /*
         // 暫存語音播放base64 url
         let voiceUrl
 
@@ -54,6 +55,7 @@
           audioNode.innerHTML = `<track src="botResponse_zh.vtt" kind="captions" />`
           widgetContainer.appendChild(audioNode)
         }
+        */
 
         var title = document.querySelector("title").innerText;
         let e = document.createElement("script"),
@@ -80,6 +82,7 @@
                 showMessageDate: true,
                 // embedded: true,
                 // add other props here
+                /*
                 onSocketEvent:{
                   // 機器人回覆事件
                   "bot_uttered":(res) => {
@@ -152,10 +155,8 @@
                       // 開啟或關閉按鈕狀態
                       e.target.classList.toggle('close');
                     };
-                    /*
-                      因點擊開啟聊天室窗就會立刻執行，無法馬上取得document.querySelector('.rw-toggle-fullscreen-button')
-                      所以需要使用setTimeout()來讓執行時間不同步以獲取document.querySelector('.rw-toggle-fullscreen-button')並添加語音播放按鈕
-                    */
+                    // 因點擊開啟聊天室窗就會立刻執行，無法馬上取得document.querySelector('.rw-toggle-fullscreen-button')
+                    // 所以需要使用setTimeout()來讓執行時間不同步以獲取document.querySelector('.rw-toggle-fullscreen-button')並添加語音播放按鈕
                     setTimeout(() => {
                       // 添加語音播放按鈕至聊天室窗上
                       if (document.querySelector('.rw-chat-open')) {
@@ -173,13 +174,15 @@
                     }
                   }
                 }
+                */
               },
               null
             );
           }),
           t.insertBefore(e, t.firstChild);
           // 只要重整就刪除對話紀錄
-          window.sessionStorage.clear()
+          // window.sessionStorage.clear()
+          window.sessionStorage.removeItem("chat_session");
       })();
     </script>
     {{/if}}
