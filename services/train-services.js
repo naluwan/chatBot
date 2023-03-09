@@ -1,4 +1,4 @@
-const { TrainingData, User, Category, Conversation } = require('../models')
+const { TrainingData, User, Category, Conversation, Event } = require('../models')
 const yaml = require('js-yaml')
 
 const trainServices = {
@@ -110,6 +110,47 @@ const trainServices = {
     const cpnyId = req.user.cpnyId
     return Conversation.findAll({ where: { cpnyId }, order: [['created_at', 'DESC']] })
       .then(senderIds => cb(null, senderIds))
+      .catch(err => cb(err))
+  },
+  getConversationLogs: (req, cb) => {
+    return Event.findAll({
+      where: { typeName: ['user', 'bot'] },
+      order: [['created_at', 'DESC']],
+      raw: true
+    })
+      .then(logs => {
+        // 更改為正確的timestamp
+        const currentLogs = logs
+          .map(log => {
+            log.data = JSON.parse(log.data)
+            log.timestamp = log.data.timestamp
+            return log
+          })
+          .sort((a, b) => a.timestamp - b.timestamp)
+
+        // 將同個sender id的資料放在一起
+        const filteredLogs = []
+        filteredLogs.push([currentLogs[0]])
+        currentLogs.map((log, idx) => {
+          if (idx > 0) {
+            let appendIdx
+            const hasSameId = filteredLogs.some((filteredItem, filteredIdx) => {
+              if (filteredItem.some(logItem => log.senderId === logItem.senderId)) {
+                appendIdx = filteredIdx
+                return true
+              }
+              return false
+            })
+            if (hasSameId) {
+              filteredLogs[appendIdx].push(log)
+            } else {
+              filteredLogs.push([log])
+            }
+          }
+          return log
+        })
+        return cb(null, filteredLogs)
+      })
       .catch(err => cb(err))
   }
 }

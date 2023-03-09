@@ -33,6 +33,11 @@ const trainController = {
     trainServices.getAllSenderIds(req, (err, data) => {
       err ? next(err) : res.json({ status: 'success', data })
     })
+  },
+  getConversationLogs: (req, res, next) => {
+    trainServices.getConversationLogs(req, (err, data) => {
+      err ? next(err) : res.json({ status: 'success', data })
+    })
   }
 }
 
