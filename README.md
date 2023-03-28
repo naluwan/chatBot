@@ -1,3 +1,8 @@
+## 下載專案
+```
+git clone https://github.com/naluwan/chatBot.git
+```
+
 ## 啟動專案
 
 1. 安裝依賴
