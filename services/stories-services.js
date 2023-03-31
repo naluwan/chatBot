@@ -24,7 +24,7 @@ const storiesServices = {
         stories.map(story => {
           return story.steps.map(step => {
             // 抓取機器人回覆
-            if (step.action) {
+            if (step.action && step.action.includes('utter_')) {
               step.response = JSON.parse(
                 JSON.stringify(responses[step.action][0].text).replace(/ \\n/g, '\\r')
               )
